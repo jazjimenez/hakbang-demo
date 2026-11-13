@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-paper text-ink font-sans text-body antialiased;
+  }
+  h1, h2, h3, .font-display {
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  }
+  /* lucide icons: stroke width ≈ 1.8 everywhere unless set inline */
+  svg.lucide {
+    stroke-width: 1.8px;
+  }
+  :focus-visible {
+    outline: 2px solid #005d41;
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .focus-ring:focus-visible {
+    outline: 2px solid #005d41;
+    outline-offset: 2px;
+  }
+  .animate-fade {
+    animation: fade 0.18s ease-out;
+  }
+  .animate-pop {
+    animation: pop 0.2s ease-out;
+  }
+  .animate-sheet {
+    animation: sheet 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+}
+@keyframes pop {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+}
+@keyframes sheet {
+  from { transform: translateY(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
