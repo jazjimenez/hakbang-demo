@@ -1,6 +1,6 @@
 import { NavLink, Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Bell, Home, Route as RouteIcon, User } from 'lucide-react';
-import { Logo } from '../components/Brand';
+import { NavBrand } from '../components/Brand';
 import { Avatar, Button, LaunchTag, cx, useIsDesktop } from '../components/ui';
 import { useT } from '../i18n';
 import { useDemo, usePaolo, usePaoloActiveApp } from '../store';
@@ -29,9 +29,7 @@ export function BellButton() {
 export function AppHeader() {
   return (
     <div className="flex items-center justify-between px-5 pt-4 pb-2 lg:hidden">
-      <Link to="/matches" aria-label="Hakbang home" className="focus-ring rounded">
-        <Logo height={24} />
-      </Link>
+      <NavBrand to="/matches" size={28} />
       <BellButton />
     </div>
   );
@@ -75,9 +73,7 @@ function TopNav() {
   return (
     <header className="bg-white border-b border-line sticky top-0 z-30">
       <div className="max-w-[1440px] mx-auto h-[72px] px-8 xl:px-[56px] flex items-center gap-10">
-        <Link to="/matches" aria-label="Hakbang home" className="focus-ring rounded">
-          <Logo height={26} />
-        </Link>
+        <NavBrand to="/matches" size={30} />
         <nav aria-label="Main">
           <ul className="flex gap-1">
             {tabs.map(({ to, label }) => (

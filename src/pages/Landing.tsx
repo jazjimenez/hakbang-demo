@@ -1,7 +1,7 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Building2, Calendar, Check, Clock, FileText, Flag, MapPin, Minus, PhilippinePeso, Plus, Route as RouteIcon, ShieldCheck, Sparkles, Star, User } from 'lucide-react';
-import { Logo, Swoosh } from '../components/Brand';
+import { Logo, NavBrand, Swoosh } from '../components/Brand';
 import { Trail } from '../components/Trail';
 import { CountUp, Reveal } from '../components/Motion';
 import { Avatar, Button, IconTile, LangToggle, MatchBars, Toast, VerifiedBadge, cx } from '../components/ui';
@@ -136,9 +136,7 @@ export default function Landing() {
         <Swoosh className="w-[1300px] -right-[160px] top-[120px] hk-drift" opacity={0.14} />
         <Container>
           <header className="relative h-[94px] flex items-center gap-8">
-            <Link to="/" aria-label="Hakbang home" className="focus-ring rounded">
-              <Logo reversed height={32} />
-            </Link>
+            <NavBrand to="/" reversed size={34} />
             <nav aria-label="Primary" className="hidden lg:flex gap-7 text-label text-white/85">
               <button type="button" onClick={() => scrollTo('how')} className="hover:text-white focus-ring rounded">
                 {t('l.nav.seekers')}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Building2, Check, ChevronRight, FileText, Lock, Plus, Sparkles, Upload as UploadIcon, Users, X } from 'lucide-react';
-import { Logo, Swoosh } from '../../components/Brand';
+import { Logo, NavBrand, Swoosh } from '../../components/Brand';
 import { Button, Checkbox, Field, IconTile, LangToggle, ProgressBar, TopBar, cx, useIsDesktop } from '../../components/ui';
 import { MobileFooter } from '../../layouts/SeekerShell';
 import { useT } from '../../i18n';
@@ -501,7 +501,7 @@ function BuildProfileDesktop() {
     <div className="min-h-[calc(100vh-28px)] bg-paper">
       <header className="bg-white border-b border-line">
         <div className="max-w-[1440px] mx-auto h-[72px] px-[56px] flex items-center">
-          <Logo height={26} />
+          <NavBrand to="/" size={30} />
           <div className="ml-auto flex items-center gap-3 w-[260px]">
             <div className="flex-1">
               <StepBars step={ready ? 2 : 1} />

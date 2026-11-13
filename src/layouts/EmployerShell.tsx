@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { BookOpen, Building2, Flag, LayoutGrid, ReceiptText, Route as RouteIcon, ShieldCheck, Users, type LucideIcon } from 'lucide-react';
-import { Logo } from '../components/Brand';
+import { NavBrand } from '../components/Brand';
 import { cx } from '../components/ui';
 import { useEmployer } from '../store';
 import { BLUEHARBOR_ID } from '../data/seed';
@@ -12,11 +12,11 @@ interface Item {
   end?: boolean;
 }
 
-function Sidebar({ items, footer }: { items: Item[]; footer: React.ReactNode }) {
+function Sidebar({ items, footer, home }: { items: Item[]; footer: React.ReactNode; home: string }) {
   return (
     <aside className="bg-deep text-white lg:w-[248px] lg:shrink-0 lg:min-h-[calc(100vh-28px)] lg:sticky lg:top-0 lg:h-[calc(100vh-28px)] flex lg:flex-col">
       <div className="px-6 pt-6 pb-6 hidden lg:block">
-        <Logo reversed height={30} />
+        <NavBrand to={home} reversed size={30} />
       </div>
       <nav aria-label="Dashboard" className="flex-1 overflow-x-auto no-scrollbar">
         <ul className="flex lg:flex-col gap-1 px-3 py-2 lg:py-0">
@@ -74,6 +74,7 @@ export default function EmployerShell() {
   return (
     <div className="lg:flex bg-paper min-h-[calc(100vh-28px)]">
       <Sidebar
+        home="/employer/overview"
         items={items}
         footer={<OrgFooter initials={bh.initials} name={bh.name} status={bh.verified ? 'Verified employer' : 'Verification pending'} statusTone={bh.verified ? 'lime' : 'mango'} />}
       />
@@ -96,7 +97,7 @@ export function AdminShell() {
   ];
   return (
     <div className="lg:flex bg-paper min-h-[calc(100vh-28px)]">
-      <Sidebar items={items} footer={<OrgFooter initials="HK" name="Hakbang admin" status="Operations" statusTone="lime" />} />
+      <Sidebar home="/admin/verification" items={items} footer={<OrgFooter initials="HK" name="Hakbang admin" status="Operations" statusTone="lime" />} />
       <div className="flex-1 min-w-0">
         <SmallScreenNote />
         <main className="px-5 py-8 lg:px-10 lg:py-10 max-w-[1192px]">
