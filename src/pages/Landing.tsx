@@ -1,8 +1,9 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Building2, Calendar, Check, Clock, FileText, Flag, MapPin, Minus, PhilippinePeso, Plus, Route as RouteIcon, ShieldCheck, Sparkles, Star, User } from 'lucide-react';
 import { Logo, Swoosh } from '../components/Brand';
 import { Trail } from '../components/Trail';
+import { CountUp, Reveal } from '../components/Motion';
 import { Avatar, Button, IconTile, LangToggle, MatchBars, Toast, VerifiedBadge, cx } from '../components/ui';
 import { useT } from '../i18n';
 import { useDemo } from '../store';
@@ -13,26 +14,43 @@ function Container({ children, className }: { children: ReactNode; className?: s
   return <div className={cx('max-w-[1200px] mx-auto px-5 md:px-10 xl:px-0', className)}>{children}</div>;
 }
 
-function FloatCard({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cx('absolute bg-white rounded-[16px] shadow-float px-4 py-3.5 text-ink', className)}>{children}</div>;
+function FloatCard({ className, children, delay, float }: { className?: string; children: ReactNode; delay: number; float: number }) {
+  return (
+    <div className={cx('absolute bg-white rounded-[16px] shadow-float px-4 py-3.5 text-ink hk-card', className)} style={{ '--d': `${delay}ms`, '--f': `${float}s` } as CSSProperties}>
+      {children}
+    </div>
+  );
 }
+
+const TRAIL_D = 'M30 500 C 90 470, 130 440, 170 410 S 270 310, 320 265 S 460 110, 520 40';
+// node i appears as the drawn path reaches it (path draws 0.35s → 2.15s)
+const NODE_DELAYS = [400, 900, 1350, 2050];
 
 function HeroVisual() {
   const t = useT();
   return (
-    <div className="relative w-[560px] h-[520px] origin-top-left scale-[0.62] sm:scale-[0.8] lg:scale-[0.9] xl:scale-100" aria-hidden>
-      <svg viewBox="0 0 560 520" className="absolute inset-0 w-full h-full">
-        <path d="M30 500 C 90 470, 130 440, 170 410 S 270 310, 320 265 S 460 110, 520 40" fill="none" stroke="#5DB250" strokeWidth="4" strokeLinecap="round" strokeDasharray="1 12" />
+    <div className="absolute left-0 top-0 w-[560px] h-[520px] origin-top-left scale-[0.62] sm:scale-[0.8] lg:scale-[0.9] xl:scale-100" aria-hidden>
+      <svg viewBox="0 0 560 520" className="absolute inset-0 w-full h-full overflow-visible">
+        <defs>
+          {/* a solid stroke that draws itself, used to reveal the dotted trail */}
+          <mask id="hk-trail-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="560" height="520">
+            <path d={TRAIL_D} fill="none" stroke="#fff" strokeWidth="14" strokeLinecap="round" pathLength={1} className="hk-draw" />
+          </mask>
+        </defs>
+        <path d={TRAIL_D} fill="none" stroke="#5DB250" strokeWidth="4" strokeLinecap="round" strokeDasharray="1 12" mask="url(#hk-trail-mask)" />
         {[
           [30, 500],
           [170, 410],
           [320, 265],
           [520, 40],
         ].map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y} r="11" fill={i < 3 ? '#5DB250' : '#fff'} stroke={i < 3 ? '#023B2A' : '#5DB250'} strokeWidth="4" />
+          <g key={i}>
+            {i === 3 && <circle cx={x} cy={y} r="11" fill="none" stroke="#5DB250" strokeWidth="3" className="hk-ping" />}
+            <circle cx={x} cy={y} r="11" fill={i < 3 ? '#5DB250' : '#fff'} stroke={i < 3 ? '#023B2A' : '#5DB250'} strokeWidth="4" className="hk-node" style={{ '--d': `${NODE_DELAYS[i]}ms` } as CSSProperties} />
+          </g>
         ))}
       </svg>
-      <FloatCard className="left-0 top-[370px] w-[230px]">
+      <FloatCard className="left-0 top-[370px] w-[230px]" delay={550} float={6.5}>
         <div className="flex items-center gap-2.5">
           <Avatar initials="PR" size={36} />
           <div>
@@ -41,7 +59,7 @@ function HeroVisual() {
           </div>
         </div>
       </FloatCard>
-      <FloatCard className="left-[190px] top-[190px] w-[290px]">
+      <FloatCard className="left-[190px] top-[190px] w-[290px]" delay={1050} float={7.5}>
         <div className="flex items-center gap-2.5">
           <span className="w-9 h-9 rounded-[10px] bg-deep text-white text-caption font-semibold flex items-center justify-center">BH</span>
           <div className="flex-1">
@@ -55,7 +73,7 @@ function HeroVisual() {
         </div>
         <VerifiedBadge className="mt-2.5" />
       </FloatCard>
-      <FloatCard className="left-[330px] top-[330px] w-[210px]">
+      <FloatCard className="left-[330px] top-[330px] w-[210px]" delay={1500} float={5.5}>
         <div className="flex items-center gap-2.5">
           <IconTile icon={Check} size={32} />
           <div>
@@ -64,7 +82,7 @@ function HeroVisual() {
           </div>
         </div>
       </FloatCard>
-      <FloatCard className="left-[330px] top-[40px] w-[190px] !bg-lime">
+      <FloatCard className="left-[330px] top-[40px] w-[190px] !bg-lime" delay={2200} float={6}>
         <div className="flex items-center gap-2.5">
           <IconTile icon={Star} size={32} tone="white" />
           <div>
@@ -80,14 +98,19 @@ function HeroVisual() {
 function Faq({ q, a, defaultOpen }: { q: string; a: string; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
-    <div className={cx('rounded-[18px] border bg-white', open ? 'border-green' : 'border-line')}>
+    <div className={cx('rounded-[18px] border bg-white transition-colors duration-300', open ? 'border-green' : 'border-line hover:border-green/40')}>
       <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="w-full flex items-center gap-4 text-left px-6 py-5 focus-ring rounded-[18px]">
         <span className="flex-1 text-title">{q}</span>
-        <span className={cx('w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0', open ? 'bg-green text-white' : 'bg-paper text-ink')}>
+        <span className={cx('w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 transition-all duration-300', open ? 'bg-green text-white rotate-180' : 'bg-paper text-ink')}>
           {open ? <Minus size={16} /> : <Plus size={16} />}
         </span>
       </button>
-      {open && <p className="px-6 pb-5 -mt-1 text-body text-muted">{a}</p>}
+      {/* grid-rows trick animates height without measuring */}
+      <div className={cx('grid transition-[grid-template-rows] duration-300 ease-out', open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')} aria-hidden={!open}>
+        <div className="overflow-hidden">
+          <p className={cx('px-6 pb-5 -mt-1 text-body text-muted transition-opacity duration-300', open ? 'opacity-100' : 'opacity-0')}>{a}</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -110,7 +133,7 @@ export default function Landing() {
     <div className="bg-paper">
       {/* HERO */}
       <section className="relative bg-deep text-white overflow-hidden">
-        <Swoosh className="w-[1300px] -right-[160px] top-[120px]" opacity={0.14} />
+        <Swoosh className="w-[1300px] -right-[160px] top-[120px] hk-drift" opacity={0.14} />
         <Container>
           <header className="relative h-[94px] flex items-center gap-8">
             <Link to="/" aria-label="Hakbang home" className="focus-ring rounded">
@@ -141,23 +164,23 @@ export default function Landing() {
             </div>
           </header>
 
-          <div className="relative grid lg:grid-cols-[600px_1fr] gap-6 lg:gap-10 pt-10 lg:pt-[106px] pb-6 lg:pb-[140px]">
+          <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,600px)_minmax(0,1fr)] gap-6 lg:gap-10 pt-10 lg:pt-[106px] pb-6 lg:pb-[140px]">
             <div>
-              <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full bg-white/10 text-caption">
-                <span className="w-2 h-2 rounded-full bg-lime" aria-hidden />
+              <span className="inline-flex items-center gap-2 h-7 px-3 rounded-full bg-white/10 text-caption hk-rise">
+                <span className="w-2 h-2 rounded-full bg-lime hk-pulse-dot" aria-hidden />
                 {t('l.badge')}
               </span>
-              <h1 className="mt-6 font-display font-extrabold text-[44px] leading-[46px] sm:text-[56px] sm:leading-[58px] xl:text-hero tracking-[-0.02em]">{t('l.hero')}</h1>
-              <p className="mt-6 text-[17px] leading-[26px] text-white/85 max-w-[560px]">{t('l.heroSub')}</p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button variant="lime" onClick={seeker}>
+              <h1 style={{ '--d': '80ms' } as CSSProperties} className="hk-rise mt-6 font-display font-extrabold text-[44px] leading-[46px] sm:text-[56px] sm:leading-[58px] xl:text-hero tracking-[-0.02em]">{t('l.hero')}</h1>
+              <p style={{ '--d': '180ms' } as CSSProperties} className="hk-rise mt-6 text-[17px] leading-[26px] text-white/85 max-w-[560px]">{t('l.heroSub')}</p>
+              <div style={{ '--d': '280ms' } as CSSProperties} className="hk-rise mt-8 flex flex-wrap gap-3">
+                <Button variant="lime" onClick={seeker} className="hover:-translate-y-0.5 transition-transform">
                   {t('l.find')}
                 </Button>
                 <Button variant="onDarkOutline" onClick={() => scrollTo('employers')}>
                   {t('l.forEmp')}
                 </Button>
               </div>
-              <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5 text-body-s text-white/90">
+              <ul style={{ '--d': '380ms' } as CSSProperties} className="hk-rise mt-6 flex flex-wrap gap-x-5 gap-y-2.5 text-body-s text-white/90">
                 {['l.trust1', 'l.trust2', 'l.trust3'].map((k) => (
                   <li key={k} className="flex items-center gap-1.5">
                     <Check size={16} className="text-lime" aria-hidden />
@@ -165,11 +188,11 @@ export default function Landing() {
                   </li>
                 ))}
               </ul>
-              <Link to="/demo" className="mt-6 inline-flex text-label text-lime underline underline-offset-4 focus-ring rounded">
-                {t('l.tryDemo')} →
+              <Link to="/demo" style={{ '--d': '460ms' } as CSSProperties} className="hk-rise group mt-6 inline-flex text-label text-lime underline underline-offset-4 focus-ring rounded">
+                {t('l.tryDemo')} <span className="inline-block ml-1 transition-transform group-hover:translate-x-1" aria-hidden>→</span>
               </Link>
             </div>
-            <div className="h-[330px] sm:h-[420px] lg:h-[470px] xl:h-[520px] -mx-2 lg:mx-0">
+            <div className="relative min-w-0 h-[330px] sm:h-[420px] lg:h-[470px] xl:h-[520px]">
               <HeroVisual />
             </div>
           </div>
@@ -179,9 +202,11 @@ export default function Landing() {
       {/* HOW IT WORKS */}
       <section id="how" className="py-16 lg:py-24 scroll-mt-4">
         <Container>
-          <h2 className="font-display font-bold text-[30px] leading-[36px] lg:text-[40px] lg:leading-[44px] tracking-[-0.01em]">{t('l.steps')}</h2>
-          <p className="mt-3 text-body text-muted">{t('l.stepsSub')}</p>
-          <ol className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <Reveal>
+            <h2 className="font-display font-bold text-[30px] leading-[36px] lg:text-[40px] lg:leading-[44px] tracking-[-0.01em]">{t('l.steps')}</h2>
+            <p className="mt-3 text-body text-muted">{t('l.stepsSub')}</p>
+          </Reveal>
+          <Reveal as="ol" stagger className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {(
               [
                 ['l.s1', 'l.s1D', User],
@@ -190,27 +215,29 @@ export default function Landing() {
                 ['l.s4', 'l.s4D', Star],
               ] as const
             ).map(([h, d, Icon], i) => (
-              <li key={h} className={cx('rounded-card p-6 border', i === 3 ? 'bg-deep text-white border-deep' : 'bg-white border-line')}>
+              <li key={h}>
+                <div className={cx('hk-lift h-full rounded-card p-6 border group', i === 3 ? 'bg-deep text-white border-deep' : 'bg-white border-line')}>
                 <div className="flex items-center justify-between">
                   <span className={cx('w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-[18px]', i === 3 ? 'bg-lime text-deep' : 'bg-mint text-green')}>{i + 1}</span>
-                  <Icon size={24} className={i === 3 ? 'text-lime' : 'text-green'} aria-hidden />
+                  <Icon size={24} className={cx('transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6', i === 3 ? 'text-lime' : 'text-green')} aria-hidden />
                 </div>
                 <h3 className="mt-4 text-h-s">{t(h)}</h3>
                 <p className={cx('mt-2.5 text-body-s', i === 3 ? 'text-white/80' : 'text-muted')}>{t(d)}</p>
+                </div>
               </li>
             ))}
-          </ol>
+          </Reveal>
         </Container>
       </section>
 
       {/* SAFETY */}
       <section className="pb-16 lg:pb-24">
         <Container className="grid lg:grid-cols-[440px_1fr] gap-10 lg:gap-14 items-center">
-          <div>
+          <Reveal>
             <h2 className="font-display font-bold text-[30px] leading-[36px] lg:text-[40px] lg:leading-[44px] tracking-[-0.01em]">{t('l.safety')}</h2>
             <p className="mt-3 text-body text-muted">{t('l.safetySub')}</p>
-          </div>
-          <ul className="space-y-3.5">
+          </Reveal>
+          <Reveal as="ul" stagger className="space-y-3.5">
             {(
               [
                 ['l.p1', 'l.p1D', ShieldCheck],
@@ -218,26 +245,30 @@ export default function Landing() {
                 ['l.p3', 'l.p3D', Flag],
               ] as const
             ).map(([h, d, Icon]) => (
-              <li key={h} className="flex gap-4 bg-white border border-line rounded-card p-5 sm:px-6">
-                <IconTile icon={Icon} />
-                <div>
-                  <h3 className="text-title">{t(h)}</h3>
-                  <p className="mt-1 text-body-s text-muted">{t(d)}</p>
+              <li key={h}>
+                <div className="hk-lift flex gap-4 bg-white border border-line rounded-card p-5 sm:px-6">
+                  <IconTile icon={Icon} />
+                  <div>
+                    <h3 className="text-title">{t(h)}</h3>
+                    <p className="mt-1 text-body-s text-muted">{t(d)}</p>
+                  </div>
                 </div>
               </li>
             ))}
-          </ul>
+          </Reveal>
         </Container>
       </section>
 
       {/* FEATURES BENTO */}
       <section className="bg-white py-16 lg:py-24">
         <Container>
-          <h2 className="font-display font-bold text-[30px] leading-[36px] lg:text-[40px] lg:leading-[44px] tracking-[-0.01em]">{t('l.features')}</h2>
-          <p className="mt-3 text-body text-muted">{t('l.featuresSub')}</p>
+          <Reveal>
+            <h2 className="font-display font-bold text-[30px] leading-[36px] lg:text-[40px] lg:leading-[44px] tracking-[-0.01em]">{t('l.features')}</h2>
+            <p className="mt-3 text-body text-muted">{t('l.featuresSub')}</p>
+          </Reveal>
           <div className="mt-10 grid gap-5">
-            <div className="grid gap-5 lg:grid-cols-[1.44fr_1fr]">
-            <div className="rounded-panel bg-paper p-7">
+            <Reveal stagger className="grid gap-5 lg:grid-cols-[1.44fr_1fr]">
+            <div className="hk-lift rounded-panel bg-paper p-7">
               <h3 className="text-h-m">{t('l.f.profile')}</h3>
               <p className="mt-1.5 text-body-s text-muted">{t('l.f.profileD')}</p>
               <div className="mt-5 bg-white border border-line rounded-[16px] p-4 flex items-center gap-3.5">
@@ -257,20 +288,22 @@ export default function Landing() {
                 </span>
               </div>
             </div>
-            <div className="rounded-panel bg-deep text-white p-7">
+            <div className="hk-lift rounded-panel bg-deep text-white p-7">
               <h3 className="text-h-m">{t('l.f.match')}</h3>
               <p className="mt-1.5 text-body-s text-white/80">{t('l.f.matchD')}</p>
               <div className="mt-5 rounded-[16px] bg-white/10 p-4 flex items-center gap-4">
                 <div>
-                  <div className="font-display font-bold text-[30px] leading-[31px] text-lime">86%</div>
+                  <CountUp to={86} suffix="%" className="block font-display font-bold text-[30px] leading-[31px] text-lime" />
                   <div className="text-caption">{t('match.short')}</div>
                 </div>
-                <MatchBars dark match={{ skills: 0.8, location: 0.95, schedule: 1 }} labels={['Skills', t('l.f.location'), 'Schedule']} />
+                <div className="hk-bars flex-1 flex">
+                  <MatchBars dark match={{ skills: 0.8, location: 0.95, schedule: 1 }} labels={['Skills', t('l.f.location'), 'Schedule']} />
+                </div>
               </div>
             </div>
-            </div>
-            <div className="grid gap-5 lg:grid-cols-[1fr_1.44fr]">
-            <div className="rounded-panel bg-mint p-7">
+            </Reveal>
+            <Reveal stagger className="grid gap-5 lg:grid-cols-[1fr_1.44fr]">
+            <div className="hk-lift rounded-panel bg-mint p-7">
               <h3 className="text-h-m">{t('l.f.tracks')}</h3>
               <p className="mt-1.5 text-body-s text-muted">{t('l.f.tracksD')}</p>
               <div className="mt-5 flex flex-wrap gap-2">
@@ -290,10 +323,10 @@ export default function Landing() {
               </div>
               <VerifiedBadge className="mt-3 !bg-transparent !px-0" />
             </div>
-            <div className="rounded-panel bg-paper p-7">
+            <div className="hk-lift rounded-panel bg-paper p-7">
               <h3 className="text-h-m">{t('l.f.progress')}</h3>
               <p className="mt-1.5 text-body-s text-muted">{t('l.f.progressD')}</p>
-              <div className="mt-5 bg-white border border-line rounded-[16px] px-2 py-4">
+              <div className="hk-trail mt-5 bg-white border border-line rounded-[16px] px-2 py-4">
                 <Trail
                   orientation="horizontal"
                   size={24}
@@ -308,7 +341,7 @@ export default function Landing() {
                 />
               </div>
             </div>
-            </div>
+            </Reveal>
           </div>
         </Container>
       </section>
@@ -316,18 +349,18 @@ export default function Landing() {
       {/* EMPLOYERS */}
       <section id="employers" className="bg-deep text-white py-16 lg:py-24 relative overflow-hidden scroll-mt-4">
         <Container className="grid lg:grid-cols-[1fr_440px] gap-12 lg:gap-14 items-center relative">
-          <div>
+          <Reveal>
             <span className="inline-flex items-center h-7 px-3 rounded-full bg-white/10 text-caption text-lime">{t('l.emp.tag')}</span>
             <h2 className="mt-5 font-display font-bold text-[30px] leading-[36px] lg:text-[40px] lg:leading-[44px] tracking-[-0.01em]">{t('l.emp.title')}</h2>
             <p className="mt-3 text-body text-white/85">{t('l.emp.sub')}</p>
-            <ul className="mt-6 space-y-4">
+            <Reveal as="ul" stagger className="mt-6 space-y-4">
               {['l.emp.b1', 'l.emp.b2', 'l.emp.b3'].map((k) => (
                 <li key={k} className="flex gap-3 text-body">
                   <Check size={18} className="text-lime mt-0.5 shrink-0" aria-hidden />
                   {t(k)}
                 </li>
               ))}
-            </ul>
+            </Reveal>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button variant="lime" onClick={employer}>
                 {t('l.emp.pilot')}
@@ -336,11 +369,11 @@ export default function Landing() {
                 {t('l.emp.talk')}
               </Button>
             </div>
-          </div>
-          <div className="bg-white text-ink rounded-panel p-7 shadow-float">
+          </Reveal>
+          <Reveal delay={150} className="bg-white text-ink rounded-panel p-7 shadow-float">
             <h3 className="text-h-s">{t('l.price.title')}</h3>
             <div className="mt-4 flex items-baseline gap-2">
-              <span className="font-display font-bold text-[38px] leading-[38px] text-green">₱2,500</span>
+              <CountUp to={2500} prefix="₱" duration={1400} className="font-display font-bold text-[38px] leading-[38px] text-green tabular-nums" />
               <span className="text-body-s text-muted">{t('l.price.per')}</span>
             </div>
             <dl className="mt-4 divide-y divide-line border-t border-line">
@@ -358,51 +391,53 @@ export default function Landing() {
               ))}
             </dl>
             <p className="mt-2 text-caption text-muted">{t('l.price.note')}</p>
-          </div>
+          </Reveal>
         </Container>
       </section>
 
       {/* SCHOOLS / PESO */}
       <section className="bg-mint">
-        <Container className="py-12 flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
+        <Container>
+        <Reveal className="py-12 flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
           <IconTile icon={Building2} size={64} tone="white" />
           <div className="flex-1">
             <h2 className="text-h-m">{t('l.peso')}</h2>
             <p className="mt-1.5 text-body text-muted">{t('l.pesoD')}</p>
           </div>
           <Button onClick={() => setToast('Demo: partner sign-up is not part of this prototype.')}>{t('l.pesoCta')}</Button>
+        </Reveal>
         </Container>
       </section>
 
       {/* FAQ */}
       <section id="faq" className="py-16 lg:py-24 scroll-mt-4">
         <Container className="grid lg:grid-cols-[360px_1fr] gap-10 lg:gap-[64px]">
-          <div>
+          <Reveal>
             <h2 className="font-display font-bold text-[30px] leading-[36px] lg:text-[40px] lg:leading-[44px] tracking-[-0.01em]">{t('l.faq')}</h2>
             <p className="mt-3 text-body text-muted">{t('l.faqSub')}</p>
-          </div>
-          <div className="space-y-3">
+          </Reveal>
+          <Reveal stagger className="space-y-3">
             <Faq q={t('l.q1')} a={t('l.a1')} defaultOpen />
             <Faq q={t('l.q2')} a={t('l.a2')} />
             <Faq q={t('l.q3')} a={t('l.a3')} />
             <Faq q={t('l.q4')} a={t('l.a4')} />
-          </div>
+          </Reveal>
         </Container>
       </section>
 
       {/* CTA BAND */}
       <section className="pb-16">
         <Container>
-          <div className="relative overflow-hidden rounded-panel bg-lime px-7 py-10 md:px-14 md:py-[52px] flex flex-col md:flex-row md:items-center gap-6">
-            <Swoosh className="w-[640px] -right-[120px] -top-[60px]" color="#023B2A" opacity={0.12} />
+          <Reveal className="relative overflow-hidden rounded-panel bg-lime px-7 py-10 md:px-14 md:py-[52px] flex flex-col md:flex-row md:items-center gap-6">
+            <Swoosh className="w-[640px] -right-[120px] -top-[60px] hk-drift" color="#023B2A" opacity={0.12} />
             <div className="relative flex-1">
               <h2 className="font-display font-extrabold text-[30px] leading-[34px] md:text-[40px] md:leading-[48px] text-deep">{t('l.cta')}</h2>
               <p className="mt-2 text-body text-deep/80">{t('l.ctaSub')}</p>
             </div>
-            <Button className="relative !bg-deep hover:!bg-black" onClick={seeker}>
+            <Button className="relative !bg-deep hover:!bg-black hover:-translate-y-0.5 transition-all" onClick={seeker}>
               {t('l.ctaBtn')}
             </Button>
-          </div>
+          </Reveal>
         </Container>
       </section>
 
