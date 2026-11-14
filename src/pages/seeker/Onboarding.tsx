@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Building2, Check, ChevronRight, FileText, Lock, Plus, Sparkles, Upload as UploadIcon, Users, X } from 'lucide-react';
 import { Logo, NavBrand, Swoosh } from '../../components/Brand';
-import { Button, Checkbox, Field, IconTile, LangToggle, ProgressBar, TopBar, cx, useIsDesktop } from '../../components/ui';
+import { Accent, Button, Checkbox, Field, IconTile, LangToggle, ProgressBar, TopBar, cx, useIsDesktop } from '../../components/ui';
 import { MobileFooter } from '../../layouts/SeekerShell';
 import { useT } from '../../i18n';
 import { useDemo, usePaolo } from '../../store';
@@ -87,7 +87,7 @@ export function Signup() {
           <div className="relative rounded-panel border border-dashed border-white/30 bg-white/5 h-[300px] flex items-end p-6 text-caption text-white/60">{t('l.heroPhoto')}</div>
           <div className="relative mt-8">
             <Logo reversed height={40} />
-            <h1 className="mt-6 font-display font-extrabold text-[40px] leading-[44px] tracking-[-0.02em]">{t('signup.headline')}</h1>
+            <h1 className="mt-6 font-display font-extrabold text-[44px] leading-[44px] tracking-[-0.04em] [&_em]:text-lime"><Accent text={t('signup.headline')} /></h1>
             <Promises className="mt-6" />
           </div>
         </div>
@@ -132,7 +132,7 @@ export function Signup() {
         </div>
         <div className="flex-1 flex flex-col justify-center text-center pt-10">
           <Logo reversed height={44} className="mx-auto" />
-          <h1 className="mt-6 font-display font-extrabold text-display">{t('signup.headline')}</h1>
+          <h1 className="mt-6 font-display font-extrabold text-[40px] leading-[40px] tracking-[-0.04em] [&_em]:text-lime"><Accent text={t('signup.headline')} /></h1>
           <p className="mt-4 text-body text-white/85">{t('signup.sub')}</p>
           <Promises className="mt-6 inline-flex flex-col items-start mx-auto text-left" />
         </div>
@@ -180,7 +180,7 @@ export function Consent() {
         <div className="px-5 pb-6 flex-1">
           <h1 className="mt-2 text-h-l lg:text-display">{t('consent.title')}</h1>
           <p className="mt-3 text-body-s text-muted">{t('consent.sub')}</p>
-          <ul className="mt-5 bg-white border border-line rounded-card divide-y divide-line">
+          <ul className="mt-5 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm divide-y divide-line">
             {items.map(([Icon, h, d]) => (
               <li key={h} className="flex gap-3.5 p-4">
                 <IconTile icon={Icon} size={40} />
@@ -278,7 +278,7 @@ function FileCard({ state, pct }: { state: UploadState; pct: number }) {
   const t = useT();
   if (state === 'idle') return null;
   return (
-    <div className="mt-4 bg-white border border-line rounded-card p-4" aria-live="polite">
+    <div className="mt-4 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4" aria-live="polite">
       <div className="flex items-center gap-3">
         <IconTile icon={FileText} size={40} />
         <div>
@@ -518,7 +518,7 @@ function BuildProfileDesktop() {
             <FileCard state={state} pct={pct} />
             <p className="mt-4 text-body-s text-muted">{t('upload.sub')}</p>
           </div>
-          <section className={cx('bg-white border border-line rounded-panel p-7 transition-opacity', !ready && 'opacity-50 pointer-events-none')} aria-disabled={!ready}>
+          <section className={cx('bg-cream border-[1.5px] border-ink rounded-panel shadow-brut p-7 transition-opacity', !ready && 'opacity-50 pointer-events-none')} aria-disabled={!ready}>
             <h2 className="text-h-m">{t('review.title')}</h2>
             {form.ai && (
               <div className="mt-4 mb-5">

@@ -66,7 +66,7 @@ function TrackCard({ track }: { track: Track }) {
   const applied = useApplied(track.id);
   return (
     <li>
-      <Link to={`/tracks/${track.id}`} className="block bg-white border border-line rounded-card p-4 hover:border-green focus-ring">
+      <Link to={`/tracks/${track.id}`} className="block bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 transition-all duration-150 hover:shadow-brut hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:shadow-none focus-ring">
         <div className="flex gap-3.5">
           <CompanyTile initials={emp.initials} color={emp.tile} size={44} />
           <div className="min-w-0">
@@ -149,7 +149,7 @@ function ListItem({ track, selected }: { track: Track; selected: boolean }) {
       <Link
         to={`/tracks/${track.id}`}
         aria-current={selected ? 'true' : undefined}
-        className={cx('block bg-white rounded-card p-5 focus-ring', selected ? 'border-2 border-green' : 'border border-line hover:border-green')}
+        className={cx('block rounded-card p-5 border-[1.5px] border-ink transition-all duration-150 focus-ring', selected ? 'bg-mint shadow-brut-lime' : 'bg-cream shadow-brut-sm hover:shadow-brut hover:-translate-y-0.5')}
       >
         <div className="flex gap-3.5">
           <CompanyTile initials={emp.initials} color={emp.tile} size={40} />
@@ -274,7 +274,7 @@ function DetailPanel({ track }: { track: Track }) {
   const emp = useEmployer(track.employerId)!;
   const applied = useApplied(track.id);
   return (
-    <section className="bg-white border border-line rounded-panel overflow-hidden" aria-labelledby="track-title">
+    <section className="bg-cream border-[1.5px] border-ink rounded-panel shadow-brut overflow-hidden" aria-labelledby="track-title">
       <div className="bg-deep text-white px-6 py-5">
         <div className="flex items-center gap-3">
           <span className="w-10 h-10 rounded-[10px] bg-green flex items-center justify-center text-caption font-semibold">{emp.initials}</span>
@@ -445,7 +445,7 @@ export function SkillGap() {
     <div className="flex-1 flex flex-col lg:max-w-[640px] lg:mx-auto lg:w-full">
       <TopBar title={t('gap.title')} back={`/tracks/${track.id}`} tag={<LaunchTag />} />
       <div className="px-5 pb-6 space-y-4 flex-1">
-        <div className="bg-white border border-line rounded-card p-4 flex items-center gap-4">
+        <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 flex items-center gap-4">
           <ScoreRing value={ready / req.length} size={72} />
           <div>
             <div className="text-h-s font-display">{t('gap.ready', { a: ready, b: req.length })}</div>
@@ -454,7 +454,7 @@ export function SkillGap() {
             </div>
           </div>
         </div>
-        <ul className="bg-white border border-line rounded-card px-4 divide-y divide-line">
+        <ul className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 divide-y divide-line">
           {[...missing, ...req.filter(has)].map((s) => {
             const miss = missing.includes(s);
             return (

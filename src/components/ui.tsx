@@ -11,13 +11,15 @@ export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Bool
 type Variant = 'primary' | 'secondary' | 'onDark' | 'onDarkOutline' | 'danger' | 'lime' | 'ghost';
 type Size = 'lg' | 'md' | 'sm';
 
+// Buttons sit on a ledge (hard offset shadow) and physically step down when pressed.
+const press = 'enabled:active:translate-y-[3px] enabled:active:shadow-none transition-[transform,box-shadow,background-color] duration-100';
 const variants: Record<Variant, string> = {
-  primary: 'bg-green text-white hover:bg-[#004a34] disabled:bg-line disabled:text-muted',
-  secondary: 'bg-white text-ink border border-line hover:bg-paper',
-  onDark: 'bg-white text-green hover:bg-mint',
-  onDarkOutline: 'bg-white/5 text-white border border-white/60 hover:bg-white/10',
-  danger: 'bg-red-tint text-red hover:bg-[#f7d9d5]',
-  lime: 'bg-lime text-deep hover:bg-[#6cc35f]',
+  primary: `bg-green text-white shadow-step hover:bg-[#006b4b] disabled:bg-line disabled:text-muted disabled:shadow-none ${press}`,
+  secondary: `bg-cream text-ink border-[1.5px] border-ink shadow-step-ink hover:bg-white ${press}`,
+  onDark: `bg-cream text-green shadow-step-lime hover:bg-white ${press}`,
+  onDarkOutline: `bg-transparent text-white border-[1.5px] border-white/70 hover:bg-white/10 hover:border-white ${press}`,
+  danger: `bg-red-tint text-red border-[1.5px] border-red/40 ${press}`,
+  lime: `bg-lime text-deep shadow-[0_4px_0_0_#15201A] hover:bg-[#6cc35f] ${press}`,
   ghost: 'text-green hover:bg-mint',
 };
 const sizes: Record<Size, string> = {
@@ -81,7 +83,11 @@ export function VerifiedBadge({ dark, className }: { dark?: boolean; className?:
 
 export function LaunchTag({ className }: { className?: string }) {
   const t = useT();
-  return <span className={cx('inline-flex items-center rounded-full bg-mango-tint text-mango-ink px-2.5 h-[26px] text-caption whitespace-nowrap', className)}>{t('launchFeature')}</span>;
+  return (
+    <span className={cx('hk-sticker inline-flex items-center rounded-[6px] border border-mango-ink/40 bg-mango-tint text-mango-ink px-2 h-[24px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.06em] whitespace-nowrap', className)}>
+      ✦ {t('launchFeature')}
+    </span>
+  );
 }
 
 export function AiTag() {
@@ -121,7 +127,7 @@ export function Chip({
 }) {
   const cls = cx(
     'inline-flex items-center gap-1.5 rounded-full h-9 px-3.5 text-label whitespace-nowrap transition-colors',
-    selected ? 'bg-green text-white border border-green' : 'bg-white text-ink border border-line',
+    selected ? 'bg-ink text-cream border-[1.5px] border-ink' : 'bg-cream text-ink border-[1.5px] border-ink/25',
     dashed && 'border-dashed border-green text-green',
     onClick && 'focus-ring hover:border-green',
     className,
@@ -144,7 +150,7 @@ export function Chip({
 /* ---------------- Surfaces ---------------- */
 
 export function Card({ className, children, as: As = 'div' }: { className?: string; children: ReactNode; as?: 'div' | 'section' | 'li' }) {
-  return <As className={cx('bg-white border border-line rounded-card', className)}>{children}</As>;
+  return <As className={cx('bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm', className)}>{children}</As>;
 }
 
 export function IconTile({
@@ -436,4 +442,33 @@ export function useIsDesktop() {
     return () => m.removeEventListener('change', h);
   }, [setV]);
   return v;
+}
+
+/** Renders "*word*" segments of a string as serif-italic accents. */
+export function Accent({ text, className }: { text: string; className?: string }) {
+  const parts = text.split(/\*([^*]+)\*/g);
+  return (
+    <>
+      {parts.map((p, i) =>
+        i % 2 ? (
+          <em key={i} className={cx('hk-accent not-italic-fallback', className)}>
+            {p}
+          </em>
+        ) : (
+          p
+        ),
+      )}
+    </>
+  );
+}
+
+/** Mono section label: ▪ 02 — PAANO ITO GUMAGANA */
+export function Eyebrow({ n, children, dark }: { n?: string; children: ReactNode; dark?: boolean }) {
+  return (
+    <div className={cx('flex items-center gap-2.5 font-mono text-[11.5px] font-semibold uppercase tracking-[0.14em]', dark ? 'text-lime' : 'text-green')}>
+      <span className={cx('w-2.5 h-2.5', dark ? 'bg-lime' : 'bg-green')} aria-hidden />
+      {n && <span className={dark ? 'text-white/60' : 'text-muted'}>{n} —</span>}
+      {children}
+    </div>
+  );
 }
