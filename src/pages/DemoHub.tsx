@@ -41,7 +41,7 @@ export function DemoHub() {
             Landing page
           </Link>
         </div>
-        <h1 className="mt-10 font-display font-extrabold text-[48px] leading-[48px] tracking-[-0.04em]">Demo <em className="hk-accent text-lime">hub</em></h1>
+        <h1 className="mt-10 font-display font-extrabold text-[40px] leading-[44px] tracking-[-0.02em]">Demo hub</h1>
         <p className="mt-3 text-body text-white/80 max-w-[640px]">Pick a role to walk through the product. State is shared across roles and saved in this browser, so what Paolo does shows up for Carla and the admin.</p>
 
         <div className="mt-8 grid md:grid-cols-3 gap-4">
@@ -50,7 +50,7 @@ export function DemoHub() {
               key={r}
               type="button"
               onClick={() => go(r)}
-              className={cx('text-left rounded-panel p-6 bg-cream text-ink border-[1.5px] border-ink shadow-brut-lime hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all duration-150 focus-ring group', s.role === r && 'ring-2 ring-lime ring-offset-2 ring-offset-deep')}
+              className={cx('text-left rounded-panel p-6 bg-white text-ink hover:-translate-y-0.5 transition-transform focus-ring group', s.role === r && 'ring-2 ring-lime')}
             >
               <span className="w-12 h-12 rounded-[14px] bg-mint text-green flex items-center justify-center">
                 <Icon size={24} aria-hidden />

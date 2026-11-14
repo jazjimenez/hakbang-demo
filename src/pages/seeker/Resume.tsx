@@ -51,7 +51,7 @@ function ResumePreview({ values }: { values: Record<number, string[]> }) {
   const custom = useDemo((s) => s.resumeCustom);
   const line = (n: number) => (!fixes.includes(n) ? FIXES[n].before : custom[n] ?? filledText(FIXES[n].after, values[n] ?? []));
   return (
-    <article className="bg-cream border-[1.5px] border-ink rounded-panel shadow-brut p-8 shadow-float text-[13px] leading-[19px] font-sans" lang="en" aria-label="Resume preview">
+    <article className="bg-white border border-line rounded-panel p-8 shadow-float text-[13px] leading-[19px] font-sans" lang="en" aria-label="Resume preview">
       <h2 className="font-display font-bold text-[22px]">{p.name}</h2>
       <p className="text-muted">
         {p.city} · {p.email} · +63 917 ••• 4821
@@ -83,7 +83,7 @@ function ReviewBody() {
   const open = FIXES.map((_, i) => i).filter((i) => !fixes.includes(i));
   return (
     <div className="space-y-4">
-      <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 py-3.5 flex items-center justify-between">
+      <div className="bg-white border border-line rounded-card px-4 py-3.5 flex items-center justify-between">
         <div>
           <div className="text-caption text-muted">{t('resume.preferred')}</div>
           <div className="text-title">{p.preferredJob}</div>
@@ -92,14 +92,14 @@ function ReviewBody() {
           {t('resume.change')}
         </Link>
       </div>
-      <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 flex items-center gap-4">
+      <div className="bg-white border border-line rounded-card p-4 flex items-center gap-4">
         <ScoreRing value={score / 100} size={84} stroke={10} label={score} />
         <div>
           <div className="text-h-s font-display">{t('resume.score', { n: score })}</div>
           <div className="text-body-s text-muted">{t('resume.scoreD', { a: open.length })}</div>
         </div>
       </div>
-      <section className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 pt-3">
+      <section className="bg-white border border-line rounded-card px-4 pt-3">
         <h2 className="text-label text-green font-sans">{t('resume.working')}</h2>
         <ul className="divide-y divide-line">
           <li className="flex items-start gap-3 py-3">
@@ -122,7 +122,7 @@ function ReviewBody() {
         </ul>
       </section>
       {open.length > 0 && (
-        <section className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 pt-3">
+        <section className="bg-white border border-line rounded-card px-4 pt-3">
           <h2 className="text-label text-mango-ink font-sans">{t('resume.fix')}</h2>
           <ul className="divide-y divide-line">
             {open.map((i) => (
@@ -142,7 +142,7 @@ function ReviewBody() {
           </ul>
         </section>
       )}
-      <section className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 pt-3">
+      <section className="bg-white border border-line rounded-card px-4 pt-3">
         <h2 className="text-label text-muted font-sans">{t('resume.missing')}</h2>
         <ul className="divide-y divide-line">
           <li>
@@ -257,7 +257,7 @@ export function ResumeFix() {
         </div>
         <h1 className="mt-4 text-h-l">{t(fix.key)}</h1>
         <p className="mt-2 text-body-s text-muted">{t(fix.why)}</p>
-        <div className="mt-5 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4" lang="en">
+        <div className="mt-5 bg-white border border-line rounded-card p-4" lang="en">
           <div className="text-caption text-muted">{t('resume.now')}</div>
           <p className="mt-2 text-body">{fix.before}</p>
         </div>

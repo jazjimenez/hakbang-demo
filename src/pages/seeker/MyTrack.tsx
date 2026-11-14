@@ -110,7 +110,7 @@ function EndorseRow({ app, desktop }: { app: Application; desktop?: boolean }) {
   const show = useDemo((s) => s.showLaunch);
   if (!show) return null;
   return (
-    <Link to="/endorsements" className="flex items-center gap-3 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 py-3.5 hover:border-green focus-ring">
+    <Link to="/endorsements" className="flex items-center gap-3 bg-white border border-line rounded-card px-4 py-3.5 hover:border-green focus-ring">
       {desktop ? <IconTile icon={Star} size={36} /> : <Star size={20} className="text-green" aria-hidden />}
       <span className="flex-1 text-label text-green">
         {t('mytrack.endorsements')}
@@ -124,7 +124,7 @@ function EndorseRow({ app, desktop }: { app: Application; desktop?: boolean }) {
 function EmptyTrack() {
   const t = useT();
   return (
-    <div className="text-center py-14 px-6 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm">
+    <div className="text-center py-14 px-6 bg-white border border-line rounded-card">
       <span className="mx-auto w-14 h-14 rounded-full bg-mint text-green flex items-center justify-center">
         <RouteIcon size={26} aria-hidden />
       </span>
@@ -172,7 +172,7 @@ function MyTrackMobile({ app, track }: { app: Application; track: Track }) {
           <h1 className="mt-3 text-h-l">{track.title}</h1>
         </div>
         <NowCard app={app} track={track} />
-        <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-5">
+        <div className="bg-white border border-line rounded-card p-5">
           <Trail steps={steps} />
         </div>
         <EndorseRow app={app} />
@@ -219,13 +219,13 @@ function MyTrackDesktop({ app, track }: { app: Application; track: Track }) {
         </div>
         <h1 className="mt-4 text-display">{lang === 'fil' ? t('mytrack.step', { ord: FIL_ORDINALS[idx] }) : t('mytrack.step', { n: EN_NUMBERS[idx] })}</h1>
       </div>
-      <div className="bg-cream border-[1.5px] border-ink rounded-panel shadow-brut px-6 py-7">
+      <div className="bg-white border border-line rounded-panel px-6 py-7">
         <Trail orientation="horizontal" steps={steps} size={26} />
       </div>
       <div className="grid grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-5 items-start">
         <div className="space-y-4">
           <NowCard app={app} track={track} />
-          <section className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-5 pt-4 pb-1">
+          <section className="bg-white border border-line rounded-card px-5 pt-4 pb-1">
             <h2 className="text-h-s">{t('mytrack.modules')}</h2>
             <ul className="divide-y divide-line">{(['m1', 'm2', 'm3'] as const).map(modRow)}</ul>
           </section>
@@ -385,7 +385,7 @@ export function Alerts() {
             <Row key={i} a={a} />
           ))}
         </ul>
-        <Link to="/reminders" className="mt-5 flex items-center gap-3.5 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 hover:border-green focus-ring">
+        <Link to="/reminders" className="mt-5 flex items-center gap-3.5 bg-white border border-line rounded-card p-4 hover:border-green focus-ring">
           <IconTile icon={Bell} size={40} />
           <div className="flex-1">
             <div className="text-title">{t('alerts.howRemind')}</div>
