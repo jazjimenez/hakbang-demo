@@ -265,3 +265,18 @@ body::after {
   .hk-marquee, .hk-spin { animation: none !important; }
   .hk-rise-step { animation: none !important; transform: none !important; }
 }
+
+/* cards drop onto their step and settle with a small bounce */
+.hk-drop {
+  transform-origin: bottom;
+  animation: hk-drop 0.7s cubic-bezier(0.3, 0.7, 0.4, 1) var(--d, 0ms) both;
+}
+@keyframes hk-drop {
+  0% { opacity: 0; transform: translateY(-46px); }
+  55% { opacity: 1; transform: translateY(0) scaleY(0.96); }
+  72% { transform: translateY(-7px) scaleY(1.01); }
+  100% { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hk-drop { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
