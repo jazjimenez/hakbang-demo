@@ -43,6 +43,8 @@ Then open http://localhost:5173. `npm run build` type-checks and builds to `dist
 
 Routing uses `HashRouter`, so every route survives a refresh on the Pages sub-path.
 
+The workflow publishes two builds to the same Pages site: `main` at `/<repo>/` and the `design/bold` branch (the experimental "steps" redesign) at `/<repo>/bold/`. A push to either branch rebuilds both.
+
 ## Project notes
 
 - **Stack:** Vite + React 18 + TypeScript, React Router (hash), Tailwind CSS (tokens in `tailwind.config.js`), Zustand (persisted), lucide-react.
