@@ -48,7 +48,7 @@ function Td({ children, className }: { children?: ReactNode; className?: string 
 }
 function Table({ children, minWidth = 880 }: { children: ReactNode; minWidth?: number }) {
   return (
-    <div className="bg-white border border-line rounded-card overflow-x-auto">
+    <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm overflow-x-auto">
       <table className="w-full border-collapse" style={{ minWidth }}>
         {children}
       </table>

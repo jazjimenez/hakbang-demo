@@ -23,7 +23,7 @@ function TrackRow() {
     else sub = t('profile.inProgress', { n: !isPassed(app.scores.m1) ? 1 : !isPassed(app.scores.m2) ? 2 : 3 });
   }
   return (
-    <Link to={app ? '/my-track' : '/matches'} className="flex items-center gap-3.5 bg-white border border-line rounded-card p-4 hover:border-green focus-ring">
+    <Link to={app ? '/my-track' : '/matches'} className="flex items-center gap-3.5 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 hover:border-green focus-ring">
       <IconTile icon={RouteIcon} size={44} />
       <div className="min-w-0">
         <div className="text-title">{track && emp ? `${track.shortTitle}, ${emp.name}` : t('tab.mytrack')}</div>
@@ -83,7 +83,7 @@ export function Profile() {
     </div>
   );
   const completeness = (
-    <div className="bg-white border border-line rounded-card px-4 py-3.5">
+    <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 py-3.5">
       <div className="flex items-center justify-between gap-3">
         <span className="text-label">{t('profile.complete', { n: p.profileCompleteness })}</span>
         {p.profileCompleteness < 100 ? (
@@ -131,7 +131,7 @@ export function Profile() {
         <span className="flex-1 text-title text-green">{t('profile.resumeScore')}</span>
         <ChevronRight size={20} className="text-green" aria-hidden />
       </Link>
-      <Link to="/endorsements" className="flex items-center gap-3.5 bg-white border border-line rounded-card p-4 hover:border-green focus-ring">
+      <Link to="/endorsements" className="flex items-center gap-3.5 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 hover:border-green focus-ring">
         <IconTile icon={Star} size={44} />
         <span className="flex-1 text-title">
           Verified Endorsements
@@ -139,7 +139,7 @@ export function Profile() {
         </span>
         <LaunchTag />
       </Link>
-      <Link to="/reminders" className="flex items-center gap-3.5 bg-white border border-line rounded-card p-4 hover:border-green focus-ring">
+      <Link to="/reminders" className="flex items-center gap-3.5 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 hover:border-green focus-ring">
         <IconTile icon={Bell} size={44} />
         <span className="flex-1 text-title">{t('profile.reminders')}</span>
         <LaunchTag />
@@ -156,17 +156,17 @@ export function Profile() {
     return (
       <div className="grid grid-cols-[1fr_400px] gap-6 items-start">
         <div className="space-y-5">
-          <div className="bg-white border border-line rounded-panel p-6 space-y-5">
+          <div className="bg-cream border-[1.5px] border-ink rounded-panel shadow-brut p-6 space-y-5">
             {header}
             {completeness}
             {skills}
           </div>
-          <div className="bg-white border border-line rounded-panel p-6">
+          <div className="bg-cream border-[1.5px] border-ink rounded-panel shadow-brut p-6">
             <Visibility />
           </div>
         </div>
         <div className="space-y-4">
-          <div className="bg-white border border-line rounded-card px-4 py-3.5">{lang}</div>
+          <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 py-3.5">{lang}</div>
           <TrackRow />
           {launchRows}
           {report}
@@ -279,7 +279,7 @@ export function Reminders() {
       <TopBar title={t('rem.top')} back={-1} tag={<LaunchTag />} />
       <div className="px-5 pb-8 space-y-4">
         <h1 className="mt-1 text-h-l">{t('rem.title')}</h1>
-        <section className="bg-white border border-line rounded-card px-4 pt-3">
+        <section className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 pt-3">
           <h2 className="text-label text-muted font-sans">{t('rem.channels')}</h2>
           <ul className="divide-y divide-line">
             <Row k="email" label="Email" sub={p.email} />
@@ -288,7 +288,7 @@ export function Reminders() {
             <Row k="sms" label="SMS" sub="+63 917 ••• 4821" />
           </ul>
         </section>
-        <section className="bg-white border border-line rounded-card px-4 pt-3">
+        <section className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 pt-3">
           <h2 className="text-label text-muted font-sans">{t('rem.what')}</h2>
           <ul className="divide-y divide-line">
             <Row k="deadlines" label={t('rem.deadlines')} sub={t('rem.deadlinesD')} />
@@ -296,7 +296,7 @@ export function Reminders() {
             <Row k="results" label={t('rem.results')} />
           </ul>
         </section>
-        <div className="bg-white border border-line rounded-card px-4 py-4 flex items-center gap-3">
+        <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 py-4 flex items-center gap-3">
           <Clock size={20} className="text-green" aria-hidden />
           <span className="flex-1 text-title">{t('rem.quiet')}</span>
           <span className="text-label text-green">{t('rem.quietV')}</span>
@@ -339,7 +339,7 @@ export function SkillPlan() {
             </Chip>
           ))}
         </div>
-        <div className="bg-white border border-line rounded-card p-4 flex items-center gap-4">
+        <div className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 flex items-center gap-4">
           <ScoreRing value={pct / 100} size={72} />
           <div>
             <div className="text-h-s font-display">{t('plan.ready', { n: pct })}</div>
@@ -347,7 +347,7 @@ export function SkillPlan() {
           </div>
         </div>
         {gaps.length > 0 && (
-          <section className="bg-white border border-line rounded-card px-4 pt-3">
+          <section className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 pt-3">
             <h2 className="text-label text-muted font-sans">{t('plan.learn')}</h2>
             <ul className="divide-y divide-line">
               {gaps.map(([s, need]) => (
@@ -364,7 +364,7 @@ export function SkillPlan() {
             </ul>
           </section>
         )}
-        <section className="bg-white border border-line rounded-card px-4 pt-3">
+        <section className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm px-4 pt-3">
           <h2 className="text-label text-muted font-sans">{t('plan.have')}</h2>
           <ul className="divide-y divide-line">
             {have.map((s) => (
