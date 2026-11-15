@@ -271,9 +271,17 @@ export function Radio({ checked }: { checked: boolean }) {
 
 /* ---------------- Meters ---------------- */
 
-export function ProgressBar({ value, className, track = 'bg-line', fill = 'bg-lime', height = 6 }: { value: number; className?: string; track?: string; fill?: string; height?: number }) {
+export function ProgressBar({ value, className, track = 'bg-line', fill = 'bg-lime', height = 6, label = 'Progress' }: { value: number; className?: string; track?: string; fill?: string; height?: number; label?: string }) {
   return (
-    <div className={cx('rounded-full overflow-hidden', track, className)} style={{ height }} role="progressbar" aria-valuenow={Math.round(value * 100)} aria-valuemin={0} aria-valuemax={100}>
+    <div
+      className={cx('rounded-full overflow-hidden', track, className)}
+      style={{ height }}
+      role="progressbar"
+      aria-label={label}
+      aria-valuenow={Math.round(value * 100)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
       <div className={cx('h-full rounded-full', fill)} style={{ width: `${Math.max(0, Math.min(1, value)) * 100}%` }} />
     </div>
   );
@@ -291,8 +299,8 @@ export function MatchBars({ match, dark, labels, compact }: { match: { skills: n
       {rows.map(([l, v]) => (
         <div key={l} className="flex items-center gap-3">
           <dt className={cx('text-caption flex-1 min-w-0', dark ? 'text-white' : 'text-ink')}>{l}</dt>
-          <dd className="w-[70px] shrink-0" aria-label={`${Math.round(v * 100)}%`}>
-            <ProgressBar value={v} track={dark ? 'bg-white/15' : 'bg-white'} />
+          <dd className="w-[70px] shrink-0">
+            <ProgressBar value={v} label={l} track={dark ? 'bg-white/15' : 'bg-white'} />
           </dd>
         </div>
       ))}

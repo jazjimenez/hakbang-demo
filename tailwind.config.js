@@ -9,7 +9,8 @@ export default {
         lime: '#5DB250',
         mint: '#E8F3EA',
         mango: { DEFAULT: '#E8912A', tint: '#FDF0DC', ink: '#94570C' },
-        red: { DEFAULT: '#C8433A', tint: '#FBE9E7' },
+        // red text darkened from #C8433A so it passes AA on the cream surfaces
+        red: { DEFAULT: '#B0372F', tint: '#FBE9E7' },
         ink: '#15201A',
         muted: '#5E6B64',
         line: '#DCD5C3',

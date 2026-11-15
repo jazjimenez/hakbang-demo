@@ -106,8 +106,8 @@ export function Candidates() {
                     ).map(([l, v]) => (
                       <div key={l} className="flex items-center gap-2">
                         <dt className="w-[52px] text-muted">{l}</dt>
-                        <dd className="flex-1" aria-label={`${Math.round(v * 100)}%`}>
-                          <ProgressBar value={v} track="bg-line" />
+                        <dd className="flex-1">
+                          <ProgressBar value={v} label={`${seeker.name}: ${l}`} track="bg-line" />
                         </dd>
                       </div>
                     ))}

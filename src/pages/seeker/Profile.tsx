@@ -96,7 +96,7 @@ export function Profile() {
           </span>
         )}
       </div>
-      <ProgressBar className="mt-2.5" value={p.profileCompleteness / 100} height={8} />
+      <ProgressBar className="mt-2.5" value={p.profileCompleteness / 100} height={8} label={t('profile.complete', { n: p.profileCompleteness })} />
     </div>
   );
   const lang = (

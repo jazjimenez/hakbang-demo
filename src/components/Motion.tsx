@@ -73,7 +73,12 @@ export function CountUp({ to, prefix = '', suffix = '', duration = 1200, classNa
     return () => cancelAnimationFrame(raf);
   }, [inView, to, duration]);
   return (
-    <span ref={ref} className={className} aria-label={`${prefix}${to.toLocaleString('en-PH')}${suffix}`}>
+    <span ref={ref} className={className}>
+      <span className="sr-only">
+        {prefix}
+        {to.toLocaleString('en-PH')}
+        {suffix}
+      </span>
       <span aria-hidden>
         {prefix}
         {n.toLocaleString('en-PH')}
