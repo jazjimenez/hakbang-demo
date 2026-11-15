@@ -1,5 +1,5 @@
 import { NavLink, Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Bell, Home, Route as RouteIcon, User } from 'lucide-react';
+import { Bell, GraduationCap, Home, Route as RouteIcon, User } from 'lucide-react';
 import { NavBrand } from '../components/Brand';
 import { Avatar, Button, LaunchTag, cx, useIsDesktop } from '../components/ui';
 import { useT } from '../i18n';
@@ -41,6 +41,7 @@ function useTabs() {
   return [
     { to: '/matches', label: t('tab.matches'), icon: Home },
     { to: '/my-track', label: t('tab.mytrack'), icon: RouteIcon },
+    { to: '/learn', label: t('tab.learn'), icon: GraduationCap },
     ...(show ? [{ to: '/alerts', label: t('tab.alerts'), icon: Bell }] : []),
     { to: '/profile', label: t('tab.profile'), icon: User },
   ];
@@ -97,7 +98,7 @@ function TopNav() {
 }
 
 /** Job seeker app shell: bottom tabs on phones, top nav ≥1024px. */
-export const TAB_ROOTS = ['/matches', '/my-track', '/alerts', '/profile'];
+export const TAB_ROOTS = ['/matches', '/my-track', '/learn', '/alerts', '/profile'];
 
 export default function SeekerShell() {
   const desktop = useIsDesktop();

@@ -16,6 +16,8 @@ const seekerMatch = () => import('./pages/seeker/Matches');
 const seekerTrack = () => import('./pages/seeker/MyTrack');
 const seekerProfile = () => import('./pages/seeker/Profile');
 const seekerResume = () => import('./pages/seeker/Resume');
+const seekerLearn = () => import('./pages/seeker/Learn');
+const site = () => import('./pages/Site');
 const emp = () => import('./pages/employer/Employer');
 const adm = () => import('./pages/admin/Admin');
 
@@ -37,6 +39,13 @@ const Reminders = l(seekerProfile, 'Reminders');
 const SkillPlan = l(seekerProfile, 'SkillPlan');
 const ResumeReview = l(seekerResume, 'ResumeReview');
 const ResumeFix = l(seekerResume, 'ResumeFix');
+const Learn = l(seekerLearn, 'Learn');
+const CourseDetail = l(seekerLearn, 'CourseDetail');
+const LessonView = l(seekerLearn, 'LessonView');
+const Contact = l(site, 'Contact');
+const Legal = l(site, 'Legal');
+const Support = l(site, 'Support');
+const EmployerTracks = l(emp, 'Tracks');
 const Verify = l(emp, 'Verify');
 const Overview = l(emp, 'Overview');
 const NewTrack = l(emp, 'NewTrack');
@@ -52,7 +61,7 @@ const AdminTracks = l(adm, 'AdminTracks');
 function Prefetch() {
   useEffect(() => {
     const id = window.setTimeout(() => {
-      [seekerOnb, seekerMatch, seekerTrack, seekerProfile, seekerResume, emp, adm, () => import('./pages/DemoHub')].forEach((f) => void f());
+      [seekerOnb, seekerMatch, seekerTrack, seekerProfile, seekerResume, seekerLearn, site, emp, adm, () => import('./pages/DemoHub')].forEach((f) => void f());
     }, 1500);
     return () => window.clearTimeout(id);
   }, []);
@@ -88,6 +97,8 @@ export default function App() {
           <Route element={<DemoChrome />}>
             <Route index element={<Landing />} />
             <Route path="demo" element={<DemoHub />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="legal/:doc" element={<Legal />} />
 
             <Route element={<SeekerBare />}>
               <Route path="signup" element={<Signup />} />
@@ -111,13 +122,19 @@ export default function App() {
               <Route path="resume-review" element={launch(<ResumeReview />)} />
               <Route path="resume-review/fix/:n" element={launch(<ResumeFix />)} />
               <Route path="report" element={<Report />} />
+              <Route path="learn" element={<Learn />} />
+              <Route path="learn/:courseId" element={<CourseDetail />} />
+              <Route path="learn/:courseId/:lessonId" element={<LessonView />} />
+              <Route path="support" element={<Support />} />
             </Route>
 
             <Route path="employer" element={<EmployerShell />}>
               <Route index element={<Navigate to="overview" replace />} />
               <Route path="verify" element={<Verify />} />
               <Route path="overview" element={<Overview />} />
+              <Route path="tracks" element={<EmployerTracks />} />
               <Route path="tracks/new" element={<NewTrack />} />
+              <Route path="tracks/:trackId/edit" element={<NewTrack />} />
               <Route path="candidates" element={<Candidates />} />
               <Route path="trainees" element={<Trainees />} />
               <Route path="trainees/:id/hire" element={<Trainees modal="hire" />} />

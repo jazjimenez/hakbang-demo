@@ -65,7 +65,7 @@ export default function EmployerShell() {
   const bh = useEmployer(BLUEHARBOR_ID)!;
   const items: Item[] = [
     { to: '/employer/overview', label: 'Overview', icon: LayoutGrid },
-    { to: '/employer/tracks/new', label: 'Tracks', icon: BookOpen },
+    { to: '/employer/tracks', label: 'Tracks', icon: BookOpen },
     { to: '/employer/candidates', label: 'Candidates', icon: Users },
     { to: '/employer/trainees', label: 'Trainees', icon: RouteIcon },
     { to: '/employer/billing', label: 'Hires & billing', icon: ReceiptText },

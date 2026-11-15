@@ -5,3 +5,4 @@ export { NewTrack } from './NewTrack';
 export { Candidates } from './Candidates';
 export { Trainees } from './Trainees';
 export { Billing } from './Billing';
+export { Tracks } from './Tracks';

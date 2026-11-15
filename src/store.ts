@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Application, Employer, Endorsement, Hire, JobSeeker, Lang, Report, Role, Score, Track, VerificationChecklist } from './data/types';
+import type { Application, CourseRecord, Employer, Endorsement, Hire, JobSeeker, Lang, Report, Role, Score, Track, VerificationChecklist } from './data/types';
+import { boostedMatch, courseById } from './data/courses';
 import { MAIN_TRACK_ID, PAOLO_ID, PRICING, seedApplications, seedEmployers, seedHires, seedSeekers, seedTracks } from './data/seed';
 
 export const STORAGE_KEY = 'hakbang-demo-v1';
@@ -42,7 +43,13 @@ interface Data {
   readAlerts: boolean;
   /** presenter guide overlay */
   guideOn: boolean;
+  guideMode: 'pitch' | 'mvp';
   billingSeen: boolean;
+  /** Hakbang Learn: finished lesson ids per course, and finished courses */
+  lessonsDone: Record<string, string[]>;
+  courseRecords: CourseRecord[];
+  /** demo milestones the MVP-check guide listens for */
+  seen: { profileCourses: boolean; candidateProfile: boolean };
 }
 
 interface Actions {
@@ -81,6 +88,12 @@ interface Actions {
   setResumeCustom: (n: number, v: string) => void;
   markAlertsRead: () => void;
   setGuideOn: (v: boolean) => void;
+  setGuideMode: (m: 'pitch' | 'mvp') => void;
+  markSeen: (k: keyof Data['seen']) => void;
+  completeLesson: (courseId: string, lessonId: string) => void;
+  finishCourse: (courseId: string, score: number) => void;
+  ffFinishCourse: (courseId?: string) => void;
+  upsertTrack: (t: Track) => void;
   markBillingSeen: () => void;
 
   ffAccept: () => void;
@@ -108,7 +121,11 @@ const seed = (): Data => ({
   reminders: { email: true, push: true, messenger: true, sms: false, deadlines: true, sessions: true, results: true },
   readAlerts: false,
   guideOn: false,
+  guideMode: 'pitch',
   billingSeen: false,
+  lessonsDone: {},
+  courseRecords: [],
+  seen: { profileCourses: false, candidateProfile: false },
 });
 
 const passed = (s: Score | undefined) => typeof s === 'number' && s >= 80;
@@ -218,6 +235,33 @@ export const useDemo = create<Data & Actions>()(
         setResumeCustom: (n, v) => set((s) => ({ resumeCustom: { ...s.resumeCustom, [n]: v } })),
         markAlertsRead: () => set({ readAlerts: true }),
         setGuideOn: (guideOn) => set({ guideOn }),
+        setGuideMode: (guideMode) => set({ guideMode }),
+        markSeen: (k) => set((s) => (s.seen[k] ? s : { seen: { ...s.seen, [k]: true } })),
+        completeLesson: (courseId, lessonId) =>
+          set((s) => {
+            const done = s.lessonsDone[courseId] ?? [];
+            return done.includes(lessonId) ? s : { lessonsDone: { ...s.lessonsDone, [courseId]: [...done, lessonId] } };
+          }),
+        finishCourse: (courseId, score) => {
+          const c = courseById(courseId);
+          if (!c) return;
+          set((s) => {
+            const lessonsDone = { ...s.lessonsDone, [courseId]: c.lessons.map((l) => l.id) };
+            const courseRecords = s.courseRecords.some((r) => r.courseId === courseId)
+              ? s.courseRecords.map((r) => (r.courseId === courseId ? { ...r, score: Math.max(r.score, score) } : r))
+              : [...s.courseRecords, { courseId, completedAt: 'Apr 22', score }];
+            // finished-course skills land on Paolo's profile, so matching and employers see them
+            const seekers = s.seekers.map((x) => {
+              if (x.id !== PAOLO_ID) return x;
+              const have = x.skills.map((k) => k.toLowerCase());
+              const add = c.skills.filter((k) => !have.includes(k.toLowerCase()));
+              return { ...x, skills: [...x.skills, ...add], profileCompleteness: Math.min(100, x.profileCompleteness + 5) };
+            });
+            return { lessonsDone, courseRecords, seekers };
+          });
+        },
+        ffFinishCourse: (courseId = 'excel-basics') => get().finishCourse(courseId, 100),
+        upsertTrack: (t) => set((s) => ({ tracks: s.tracks.some((x) => x.id === t.id) ? s.tracks.map((x) => (x.id === t.id ? t : x)) : [...s.tracks, t] })),
         markBillingSeen: () => set((s) => (s.billingSeen ? s : { billingSeen: true })),
 
         ffAccept: () => {
@@ -247,8 +291,9 @@ export const useDemo = create<Data & Actions>()(
     {
       name: STORAGE_KEY,
       // v2: hire dates moved to the April demo clock; older saved data is replaced with the seed
-      version: 2,
-      migrate: (persisted, version) => (version < 2 ? (seed() as unknown as Data & Actions) : (persisted as Data & Actions)),
+      // v3: courses, job offers and new guide state; older saved data is replaced with the seed
+      version: 3,
+      migrate: (persisted, version) => (version < 3 ? (seed() as unknown as Data & Actions) : (persisted as Data & Actions)),
       storage: createJSONStorage(() => {
         try {
           return localStorage;
@@ -300,3 +345,15 @@ export function trailFor(a: Application): { key: TrailKey; state: StepState }[] 
 }
 
 export const peso = (n: number) => `₱${n.toLocaleString('en-PH')}`;
+
+/** Skills Paolo earned from finished courses. */
+export const useCourseSkills = () =>
+  useDemo((s) => s.courseRecords.flatMap((r) => courseById(r.courseId)?.skills ?? []));
+
+/** Paolo's live match for a track, including the boost from finished courses. */
+export function useLiveMatch(trackId?: string) {
+  const track = useTrack(trackId);
+  const skills = useCourseSkills();
+  if (!track) return undefined;
+  return boostedMatch(track.match, track.requiredSkills, skills);
+}

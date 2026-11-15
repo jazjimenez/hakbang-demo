@@ -17,6 +17,8 @@ export interface JobSeeker {
   profileCompleteness: number; // 0–100
   visibility: 'applied-only' | 'all-verified';
   email?: string;
+  /** completed Hakbang Learn course ids (seeded candidates; Paolo's live ones are in the store) */
+  certificates?: string[];
 }
 
 export interface VerificationChecklist {
@@ -72,6 +74,61 @@ export interface Track {
   requiredSkills: string[];
   /** Paolo's match for this track (seeker-side demo) */
   match: { total: number; skills: number; location: number; schedule: number };
+  /** the job waiting at the end of the track */
+  job?: JobOffer;
+  /** Hakbang Learn courses that prepare for this track */
+  prepCourseIds?: string[];
+  /** created by the employer in this demo session */
+  createdInDemo?: boolean;
+}
+
+export interface JobOffer {
+  position: string;
+  salaryMin: number;
+  salaryMax: number;
+  type: string;
+}
+
+export type LessonKind = 'video' | 'reading' | 'quiz';
+
+export interface Lesson {
+  id: string;
+  title: string;
+  kind: LessonKind;
+  minutes: number;
+}
+
+export interface QuizQuestion {
+  q: string;
+  options: string[];
+  answer: number;
+}
+
+export interface Course {
+  id: string;
+  title: string;
+  /** employer id, or 'hakbang' for Hakbang Learn */
+  providerId: string;
+  providerName: string;
+  category: 'excel' | 'customer' | 'backoffice' | 'it' | 'career';
+  level: 'Beginner' | 'Intermediate';
+  hours: number;
+  rating: number;
+  learners: number;
+  skills: string[];
+  summary: string;
+  outcomes: string[];
+  lessons: Lesson[];
+  quiz: QuizQuestion[];
+  /** track this course prepares for */
+  trackId?: string;
+  tile: string;
+}
+
+export interface CourseRecord {
+  courseId: string;
+  completedAt: string;
+  score: number;
 }
 
 export type AppStatus =
