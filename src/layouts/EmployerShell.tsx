@@ -55,7 +55,7 @@ function OrgFooter({ initials, name, status, statusTone }: { initials: string; n
       <span className="w-9 h-9 rounded-[10px] bg-green flex items-center justify-center text-caption font-semibold">{initials}</span>
       <div className="min-w-0">
         <div className="text-label truncate">{name}</div>
-        <div className={cx('text-caption', statusTone === 'lime' ? 'text-lime' : 'text-[#F5B86A]')}>{status}</div>
+        <div className={cx('text-caption', statusTone === 'lime' ? 'text-[#86D37A]' : 'text-[#F5B86A]')}>{status}</div>
       </div>
     </div>
   );
