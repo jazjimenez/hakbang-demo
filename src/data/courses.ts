@@ -228,7 +228,7 @@ export const COURSES: Course[] = [
       { q: 'SSS, PhilHealth and Pag-IBIG on your payslip are…', options: ['government benefits of a regular job', 'fees you pay Hakbang', 'optional bonuses'], answer: 0 },
       { q: 'A good question to ask the interviewer is…', options: ['“What does a great first month look like?”', '“Can I start late?”', 'none; never ask questions'], answer: 0 },
     ],
-    tile: '#E8912A',
+    tile: '#94570C',
   },
   {
     id: 'email-writing',
@@ -254,7 +254,7 @@ export const COURSES: Course[] = [
       { q: 'A work email should be…', options: ['as long as possible', 'short and specific', 'all capital letters'], answer: 1 },
       { q: 'When following up you should…', options: ['repeat the request politely with context', 'send the same email again', 'call their personal number'], answer: 0 },
     ],
-    tile: '#E8912A',
+    tile: '#94570C',
   },
 ];
 

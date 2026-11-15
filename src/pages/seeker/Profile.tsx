@@ -216,7 +216,6 @@ export function Profile() {
             {header}
             {completeness}
             {skills}
-        {certs}
             {certs}
           </div>
           <div className="bg-cream border-[1.5px] border-ink rounded-panel shadow-brut p-6">
@@ -240,6 +239,7 @@ export function Profile() {
         {completeness}
         {lang}
         {skills}
+        {certs}
         <TrackRow />
         {launchRows}
         <div className="pt-2">
