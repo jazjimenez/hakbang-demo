@@ -1,12 +1,13 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowUpRight, Building2, Calendar, Check, Clock, FileText, Flag, MapPin, Minus, PhilippinePeso, Plus, Route as RouteIcon, ShieldCheck, Sparkles, Star, User } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Building2, Globe2, Home as HomeIcon, Calendar, Check, Clock, FileText, Flag, MapPin, Minus, PhilippinePeso, Plus, Route as RouteIcon, ShieldCheck, Sparkles, Star, User } from 'lucide-react';
 import { Logo, NavBrand, Swoosh } from '../components/Brand';
 import { Trail } from '../components/Trail';
 import { CountUp, Reveal } from '../components/Motion';
 import { Accent, Avatar, Button, Eyebrow, IconTile, LangToggle, MatchBars, Toast, VerifiedBadge, cx } from '../components/ui';
 import { useT } from '../i18n';
 import { useDemo } from '../store';
+import { LFS, PLAN } from '../data/facts';
 
 const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 const d = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties;
@@ -202,6 +203,141 @@ function Faq({ q, a, defaultOpen, n }: { q: string; a: string; defaultOpen?: boo
   );
 }
 
+
+/* ---------------- Story: the problem (sourced) ---------------- */
+
+function Problem() {
+  const t = useT();
+  const lang = useDemo((s) => s.lang);
+  const youthJobless = Math.round(100 - LFS.youthEmploymentRate);
+  const stats = [
+    { value: <CountUp to={LFS.unemploymentRate} decimals={1} suffix="%" />, label: t('x.stat1'), detail: t('x.stat1d', { prev: LFS.unemploymentRatePrev }) },
+    { value: <CountUp to={LFS.unemployed / 1_000_000} decimals={2} suffix="M" />, label: t('x.stat2'), detail: t('x.stat2d', { lf: (LFS.laborForce / 1_000_000).toFixed(1) }) },
+    { value: <CountUp to={youthJobless} />, label: t('x.stat3'), detail: t('x.stat3d', { now: LFS.youthEmploymentRate, prev: LFS.youthEmploymentRatePrev }) },
+  ];
+  return (
+    <section id="problem" className="py-20 lg:py-28 scroll-mt-4">
+      <Container>
+        <Reveal>
+          <Eyebrow n="01">{t('x.problem')}</Eyebrow>
+          <h2 className={cx(H2, 'mt-4 max-w-[860px] [&_em]:text-red')}>
+            <Accent text={t('x.problemTitle')} />
+          </h2>
+          <p className="mt-4 text-body text-muted max-w-[640px]">{t('x.problemSub')}</p>
+        </Reveal>
+        <Reveal stagger className="mt-10 grid md:grid-cols-3 gap-5">
+          {stats.map((st, i) => (
+            <div key={i} className={cx('rounded-[20px] border-[1.5px] border-ink p-6', i === 2 ? 'bg-ink text-cream shadow-brut-lime' : 'bg-cream shadow-brut')}>
+              <div className={cx('font-display font-extrabold text-[56px] leading-[56px] tracking-[-0.04em] tabular-nums', i === 2 ? 'text-lime' : 'text-red')}>{st.value}</div>
+              <div className="mt-2 text-title">{st.label}</div>
+              <div className={cx('mt-1 text-body-s', i === 2 ? 'text-cream/70' : 'text-muted')}>{st.detail}</div>
+            </div>
+          ))}
+        </Reveal>
+        {/* the loop Hakbang breaks */}
+        <Reveal className="mt-8 rounded-[20px] border-[1.5px] border-dashed border-ink/40 p-5 md:p-6 flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+          <span className="font-mono text-[12px] md:text-[13px] font-semibold uppercase tracking-[0.08em] text-muted line-through decoration-red decoration-2">{t('x.loop')}</span>
+          <ArrowRight size={20} className="hidden md:block text-green shrink-0" aria-hidden />
+          <span className="text-body font-semibold">{t('x.loopBreak')}</span>
+        </Reveal>
+        <p className="mt-4 font-mono text-[11px] text-muted">
+          {t('x.source')}: {lang === 'fil' ? LFS.month.fil : LFS.month.en}.{' '}
+          <a href={LFS.sourceUrl} target="_blank" rel="noreferrer" className="underline hover:text-green">
+            {LFS.sourceLabel}
+          </a>
+        </p>
+      </Container>
+    </section>
+  );
+}
+
+/* ---------------- Story: impact, with a calculator ---------------- */
+
+const fmtPeso = (n: number) => (n >= 1e9 ? `₱${(n / 1e9).toFixed(2)}B` : n >= 1e6 ? `₱${(n / 1e6).toFixed(1)}M` : `₱${Math.round(n).toLocaleString('en-PH')}`);
+
+function Impact() {
+  const t = useT();
+  const [grads, setGrads] = useState(5000);
+  const hires = Math.round(grads * PLAN.hireRate);
+  const wages = hires * PLAN.monthlySalary * 12;
+  const share = (hires / LFS.unemployed) * 100;
+  const rate = (hires / LFS.laborForce) * 100;
+  const tiers: [typeof User, string, string][] = [
+    [User, 'x.i1', 'x.i1d'],
+    [HomeIcon, 'x.i2', 'x.i2d'],
+    [Globe2, 'x.i3', 'x.i3d'],
+  ];
+  return (
+    <section id="impact" className="py-20 lg:py-28 scroll-mt-4">
+      <Container>
+        <Reveal>
+          <Eyebrow n="05">{t('x.impact')}</Eyebrow>
+          <h2 className={cx(H2, 'mt-4 max-w-[820px] [&_em]:text-green')}>
+            <Accent text={t('x.impactTitle')} />
+          </h2>
+          <p className="mt-4 text-body text-muted max-w-[620px]">{t('x.impactSub')}</p>
+        </Reveal>
+        {/* three tiers that grow like steps */}
+        <Reveal stagger className="mt-10 grid md:grid-cols-3 gap-5 md:items-end">
+          {tiers.map(([Icon, h, d], i) => (
+            <div key={h} className="md:mb-[var(--lift)]" style={{ '--lift': `${i * 28}px` } as CSSProperties}>
+              <div className={cx('rounded-[20px] border-[1.5px] border-ink p-6 h-full', i === 2 ? 'bg-deep text-white shadow-brut-lime' : i === 1 ? 'bg-mint shadow-brut' : 'bg-cream shadow-brut')}>
+                <Icon size={26} className={i === 2 ? 'text-lime' : 'text-green'} aria-hidden />
+                <h3 className="mt-3 text-h-m">{t(h)}</h3>
+                <p className={cx('mt-2 text-body-s', i === 2 ? 'text-white/80' : 'text-muted')}>{t(d)}</p>
+              </div>
+            </div>
+          ))}
+        </Reveal>
+
+        {/* calculator */}
+        <Reveal className="mt-10 rounded-[24px] border-[1.5px] border-ink bg-cream shadow-brut p-6 md:p-8">
+          <div className="flex flex-col md:flex-row md:items-end gap-5 md:gap-10">
+            <label className="flex-1">
+              <span className="text-title">{t('x.calcTitle')}</span>
+              <span className="mt-2 block font-display font-extrabold text-[44px] leading-[44px] tracking-[-0.03em] text-green tabular-nums">{grads.toLocaleString('en-PH')}</span>
+              <span className="block text-body-s text-muted">{t('x.calcGrads')}</span>
+              <input
+                type="range"
+                min={100}
+                max={50000}
+                step={100}
+                value={grads}
+                onChange={(e) => setGrads(Number(e.target.value))}
+                className="mt-4 w-full accent-[#005D41] h-2"
+                aria-label={t('x.calcGrads')}
+                data-testid="impact-slider"
+              />
+            </label>
+          </div>
+          <dl className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {(
+              [
+                [hires.toLocaleString('en-PH'), t('x.calcHires')],
+                [fmtPeso(wages), t('x.calcWages')],
+                [`${share.toFixed(2)}%`, t('x.calcShare')],
+                [`−${rate.toFixed(3)} pts`, t('x.calcRate')],
+              ] as const
+            ).map(([v, l], i) => (
+              <div key={l} className={cx('rounded-[16px] border-[1.5px] border-ink p-4', i === 0 ? 'bg-lime' : 'bg-paper')}>
+                <dt className="sr-only">{l}</dt>
+                <dd className="font-mono font-semibold text-[26px] leading-[30px] tabular-nums" data-testid={`impact-${i}`}>
+                  {v}
+                </dd>
+                <dd className={cx('mt-1 text-caption', i === 0 ? 'text-deep/80' : 'text-muted')}>{l}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-5 text-caption text-muted">
+            {t('x.calcNote', { rate: Math.round(PLAN.hireRate * 100), pay: PLAN.monthlySalary.toLocaleString('en-PH'), src: `${LFS.sourceLabel}` })}{' '}
+            {t('x.pilotLine')}
+          </p>
+        </Reveal>
+      </Container>
+    </section>
+  );
+}
+
 /* ---------------- Page ---------------- */
 
 export default function Landing() {
@@ -297,11 +433,13 @@ export default function Landing() {
 
       <Ticker />
 
+      <Problem />
+
       {/* HOW IT WORKS */}
       <section id="how" className="py-20 lg:py-28 scroll-mt-4">
         <Container>
           <Reveal>
-            <Eyebrow n="01">{t('x.how')}</Eyebrow>
+            <Eyebrow n="02">{t('x.how')}</Eyebrow>
             <h2 className={cx(H2, 'mt-4 max-w-[760px] [&_em]:text-green')}>
               <Accent text={t('l.steps')} />
             </h2>
@@ -344,7 +482,7 @@ export default function Landing() {
       <section className="pb-20 lg:pb-28">
         <Container className="grid lg:grid-cols-[460px_1fr] gap-12 lg:gap-16 items-center">
           <Reveal>
-            <Eyebrow n="02">{t('x.safety')}</Eyebrow>
+            <Eyebrow n="03">{t('x.safety')}</Eyebrow>
             <h2 className={cx(H2, 'mt-4 [&_em]:text-red')}>
               <Accent text={t('l.safety')} />
             </h2>
@@ -380,7 +518,7 @@ export default function Landing() {
       <section className="bg-cream border-y-[1.5px] border-ink py-20 lg:py-28">
         <Container>
           <Reveal>
-            <Eyebrow n="03">{t('x.features')}</Eyebrow>
+            <Eyebrow n="04">{t('x.features')}</Eyebrow>
             <h2 className={cx(H2, 'mt-4 [&_em]:text-green')}>
               <Accent text={t('l.features')} />
             </h2>
@@ -466,11 +604,13 @@ export default function Landing() {
         </Container>
       </section>
 
+      <Impact />
+
       {/* EMPLOYERS */}
       <section id="employers" className="bg-deep text-white py-20 lg:py-28 relative overflow-hidden scroll-mt-4">
         <Container className="grid lg:grid-cols-[1fr_420px] gap-14 lg:gap-20 items-center relative">
           <Reveal>
-            <Eyebrow n="04" dark>
+            <Eyebrow n="06" dark>
               {t('l.emp.tag')}
             </Eyebrow>
             <h2 className={cx(H2, 'mt-4 [&_em]:text-lime')}>
@@ -491,7 +631,7 @@ export default function Landing() {
               <Button variant="lime" onClick={employer}>
                 {t('l.emp.pilot')} <ArrowUpRight size={18} aria-hidden />
               </Button>
-              <Button variant="onDarkOutline" onClick={() => setToast('Demo: the contact form is not part of this prototype.')}>
+              <Button variant="onDarkOutline" onClick={() => nav('/contact?topic=employer')}>
                 {t('l.emp.talk')}
               </Button>
             </div>
@@ -540,7 +680,7 @@ export default function Landing() {
               <h2 className="text-h-m text-deep">{t('l.peso')}</h2>
               <p className="mt-1.5 text-body text-deep/80">{t('l.pesoD')}</p>
             </div>
-            <Button variant="secondary" onClick={() => setToast('Demo: partner sign-up is not part of this prototype.')}>
+            <Button variant="secondary" onClick={() => nav('/contact?topic=school')}>
               {t('l.pesoCta')}
             </Button>
           </Reveal>
@@ -551,7 +691,7 @@ export default function Landing() {
       <section id="faq" className="py-20 lg:py-28 scroll-mt-4">
         <Container className="grid lg:grid-cols-[380px_1fr] gap-10 lg:gap-[64px]">
           <Reveal>
-            <Eyebrow n="05">{t('x.faq')}</Eyebrow>
+            <Eyebrow n="07">{t('x.faq')}</Eyebrow>
             <h2 className={cx(H2, 'mt-4 [&_em]:text-green')}>
               <Accent text={t('l.faq')} />
             </h2>
@@ -616,8 +756,8 @@ export default function Landing() {
                   ],
                 ]}
               />
-              <FooterCol title={t('l.ft.partners')} items={[[t('l.ft.career'), () => setToast('Demo: partner portal not included.')], [t('l.ft.peso'), () => setToast('Demo: partner portal not included.')]]} />
-              <FooterCol title={t('l.ft.help')} items={[['FAQ', () => scrollTo('faq')], [t('l.ft.report'), () => nav('/report')], [t('l.ft.privacy'), () => nav('/consent')], [t('l.ft.terms'), () => setToast('Demo: Terms of Use page not included.')]]} />
+              <FooterCol title={t('l.ft.partners')} items={[[t('l.ft.career'), () => nav('/contact?topic=school')], [t('l.ft.peso'), () => nav('/contact?topic=school')]]} />
+              <FooterCol title={t('l.ft.help')} items={[['FAQ', () => scrollTo('faq')], [t('l.ft.report'), () => nav('/report')], [t('l.ft.privacy'), () => nav('/legal/privacy')], [t('l.ft.terms'), () => nav('/legal/terms')]]} />
             </div>
           </div>
           <div className="mt-12 pt-6 border-t border-white/15 flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.08em] text-white/60">

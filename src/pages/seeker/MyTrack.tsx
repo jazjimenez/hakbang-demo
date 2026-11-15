@@ -473,7 +473,7 @@ export function Report() {
         >
           {t('report.submit')}
         </Button>
-        <button type="button" className="w-full flex items-center justify-center gap-2 text-label text-green py-1 focus-ring rounded" onClick={() => setToast('Demo: support chat is not part of this prototype.')}>
+        <button type="button" className="w-full flex items-center justify-center gap-2 text-label text-green py-1 focus-ring rounded" onClick={() => nav('/support')}>
           <MessageSquare size={17} aria-hidden /> {t('report.chat')}
         </button>
       </MobileFooter>

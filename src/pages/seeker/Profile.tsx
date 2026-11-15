@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, Bell, Check, ChevronRight, Clock, Flag, MapPin, Route as RouteIcon, Sparkles, Star } from 'lucide-react';
+import { AlertCircle, Award, Bell, Check, ChevronRight, Clock, Flag, GraduationCap, MapPin, Route as RouteIcon, Sparkles, Star } from 'lucide-react';
 import { AppHeader, MobileFooter } from '../../layouts/SeekerShell';
 import { Avatar, Button, Chip, IconTile, LangToggle, LaunchTag, ProgressBar, Radio, ScoreRing, Switch, TopBar, VerifiedBadge, cx, useIsDesktop } from '../../components/ui';
 import { useT } from '../../i18n';
-import { isPassed, useDemo, useEmployer, usePaolo, usePaoloActiveApp, useTrack } from '../../store';
+import { isPassed, useCourseSkills, useDemo, useEmployer, usePaolo, usePaoloActiveApp, useTrack } from '../../store';
+import { courseById } from '../../data/courses';
 import { PAOLO_ID } from '../../data/seed';
 
 /* ---------------- S11 / D07 Profile ---------------- */
@@ -66,6 +67,12 @@ export function Profile() {
   const p = usePaolo();
   const update = useDemo((s) => s.updateSeeker);
   const show = useDemo((s) => s.showLaunch);
+  const records = useDemo((s) => s.courseRecords);
+  const courseSkills = useCourseSkills();
+  const markSeen = useDemo((s) => s.markSeen);
+  useEffect(() => {
+    if (records.length) markSeen('profileCourses');
+  }, [records.length, markSeen]);
   const endorsements = useDemo((s) => s.applications.filter((a) => a.seekerId === PAOLO_ID).flatMap((a) => a.endorsements));
 
   const header = (
@@ -116,13 +123,62 @@ export function Profile() {
         )}
       </div>
       <ul className="mt-3 flex flex-wrap gap-2">
-        {p.skills.map((s) => (
-          <li key={s}>
-            <Chip>{s}</Chip>
-          </li>
-        ))}
+        {p.skills.map((s) =>
+          courseSkills.includes(s) ? (
+            <li key={s}>
+              <span className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-label bg-mint text-green border-[1.5px] border-green" title={t('profile.verifiedSkill')}>
+                <Award size={14} aria-label={t('profile.verifiedSkill')} /> {s}
+              </span>
+            </li>
+          ) : (
+            <li key={s}>
+              <Chip>{s}</Chip>
+            </li>
+          ),
+        )}
       </ul>
     </div>
+  );
+  const certs = (
+    <section aria-labelledby="certs-h" className="bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h2 id="certs-h" className="text-h-s font-display">
+          {t('profile.certs')}
+        </h2>
+        <Link to="/learn" className="inline-flex items-center gap-1 text-label text-green focus-ring rounded">
+          <GraduationCap size={15} aria-hidden /> {t('profile.browseCourses')}
+        </Link>
+      </div>
+      {records.length === 0 ? (
+        <p className="mt-2 text-body-s text-muted">{t('profile.certsEmpty')}</p>
+      ) : (
+        <>
+          <ul className="mt-3 space-y-2.5" data-testid="certificates">
+            {records.map((r) => {
+              const c = courseById(r.courseId)!;
+              return (
+                <li key={r.courseId}>
+                  <Link to={`/learn/${c.id}`} className="flex items-center gap-3 rounded-[14px] bg-paper border border-ink/15 px-3.5 py-3 hover:border-ink focus-ring">
+                    <span className="w-9 h-9 rounded-full bg-lime border-[1.5px] border-ink flex items-center justify-center shrink-0">
+                      <Award size={17} className="text-deep" aria-hidden />
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-label truncate" lang="en">
+                        {c.title}
+                      </span>
+                      <span className="block text-caption text-muted">
+                        {c.providerName} · {r.completedAt} · {r.score}%
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="mt-3 text-caption text-muted">{t('profile.employersSee')}</p>
+        </>
+      )}
+    </section>
   );
   const launchRows = show && (
     <>
@@ -160,6 +216,8 @@ export function Profile() {
             {header}
             {completeness}
             {skills}
+        {certs}
+            {certs}
           </div>
           <div className="bg-cream border-[1.5px] border-ink rounded-panel shadow-brut p-6">
             <Visibility />

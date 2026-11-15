@@ -6,7 +6,7 @@ import { Avatar, Button, Card, Checkbox, CloseButton, IconTile, LaunchTag, Modal
 import { isPassed, peso, useDemo, useTrack } from '../../store';
 import { PRICING, UNLISTED_ON_TRACK } from '../../data/seed';
 import type { Application, Module } from '../../data/types';
-import { type Row, useTrackRows, atRisk, inCohort, useToast, Th, Td, Table, Tabs, Person, Note, scoreCell } from './shared';
+import { type Row, useTrackRows, atRisk, inCohort, useToast, Th, Td, Table, Tabs, Person, Note, scoreCell , ComposeModal, type ComposeSpec } from './shared';
 
 /* ---------------- E05 Trainees + E06 / E08 modals ---------------- */
 
@@ -21,6 +21,7 @@ export function Trainees({ modal }: { modal?: 'hire' | 'endorse' }) {
   const [tab, setTab] = useState<TFilter>('all');
   const [posting, setPosting] = useState(false);
   const [viewing, setViewing] = useState<string | null>(null);
+  const [compose, setCompose] = useState<ComposeSpec | null>(null);
   const status = (a: Application) => (atRisk(a) ? 'risk' : a.status === 'in-track' ? 'on' : 'passed');
   const counts = {
     on: rows.filter((r) => status(r.app) === 'on').length + UNLISTED_ON_TRACK,
@@ -55,7 +56,19 @@ export function Trainees({ modal }: { modal?: 'hire' | 'endorse' }) {
       );
     if (atRisk(a))
       return (
-        <Button size="sm" variant="secondary" onClick={() => toast.show(`Message sent to ${r.seeker.firstName} (demo).`)}>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() =>
+            setCompose({
+              title: `Message ${r.seeker.firstName}`,
+              to: r.seeker.name,
+              text: `Hi ${r.seeker.firstName}, we missed you at Saturday's session. Your Module 2 retake is due Apr 24. Can we help you catch up? Reply here and we'll set a time.`,
+              send: 'Send message',
+              done: `Message sent to ${r.seeker.firstName}.`,
+            })
+          }
+        >
           Message
         </Button>
       );
@@ -77,7 +90,18 @@ export function Trainees({ modal }: { modal?: 'hire' | 'endorse' }) {
             <Button variant="secondary" size="md" disabled={pendingResults.length === 0} onClick={() => setPosting(true)}>
               Post {nextModule} results
             </Button>
-            <Button size="md" onClick={() => toast.show('Weekly report sent to all trainees (demo).')}>
+            <Button
+              size="md"
+              onClick={() =>
+                setCompose({
+                  title: 'Weekly report to trainees',
+                  to: 'All 20 trainees, Back Office Associate batch 1',
+                  text: 'Week 3 of 4 is done. Module 2 test closes Saturday Apr 24, 11:59 PM (80% to pass). Face-to-face assessment is May 1 at BlueHarbor Ortigas, bring a valid ID. You are doing great, keep going!',
+                  send: 'Send report',
+                  done: 'Weekly report sent to all trainees.',
+                })
+              }
+            >
               Send weekly report
             </Button>
           </>
@@ -150,6 +174,7 @@ export function Trainees({ modal }: { modal?: 'hire' | 'endorse' }) {
       {viewRow && <ViewTrainee row={viewRow} onClose={() => setViewing(null)} />}
       {modal === 'hire' && id && <HireModal appId={id} />}
       {modal === 'endorse' && id && show && <EndorseModal appId={id} />}
+      {compose && <ComposeModal spec={compose} onClose={() => setCompose(null)} onSent={toast.show} />}
       {toast.el}
     </>
   );

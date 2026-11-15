@@ -1,21 +1,58 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AlertCircle, BookOpen, Calendar, Check, Clock, Flag, Lock, MapPin, PhilippinePeso, ShieldCheck, Sparkles, Users } from 'lucide-react';
+import { AlertCircle, Award, BookOpen, Briefcase, Calendar, Check, Clock, Flag, GraduationCap, Lock, MapPin, PhilippinePeso, Search, ShieldCheck, Sparkles, Users } from 'lucide-react';
 import { AppHeader } from '../../layouts/SeekerShell';
 import { MobileFooter } from '../../layouts/SeekerShell';
 import { BottomSheet, Button, Checkbox, Chip, CloseButton, CompanyTile, LaunchTag, MatchBars, Modal, ScoreRing, StatusPill, Toast, TopBar, VerifiedBadge, cx, useIsDesktop } from '../../components/ui';
 import { useT } from '../../i18n';
-import { peso, useDemo, useEmployer, usePaolo, useTrack } from '../../store';
+import { peso, useCourseSkills, useDemo, useEmployer, usePaolo, useTrack } from '../../store';
+import { boostedMatch, courseById } from '../../data/courses';
 import type { Track } from '../../data/types';
 
 type Filter = 'all' | 'near' | 'weekend';
 
-function useLiveTracks(filter: Filter) {
+type LiveTrack = Track & { boost: number };
+
+/** Live tracks with Paolo's match, boosted by skills from finished courses. */
+function useLiveTracks(filter: Filter, q = '') {
   const tracks = useDemo((s) => s.tracks);
+  const employers = useDemo((s) => s.employers);
+  const courseSkills = useCourseSkills();
+  const needle = q.trim().toLowerCase();
   return tracks
     .filter((t) => t.status === 'live')
+    .map((t): LiveTrack => {
+      const { boost, ...match } = boostedMatch(t.match, t.requiredSkills, courseSkills);
+      return { ...t, match, boost };
+    })
     .filter((t) => (filter === 'near' ? t.match.location >= 0.85 : filter === 'weekend' ? t.schedule.includes('Sat') : true))
+    .filter((t) => {
+      if (!needle) return true;
+      const emp = employers.find((e) => e.id === t.employerId)?.name ?? '';
+      return [t.title, emp, t.location, t.job?.position ?? '', ...t.requiredSkills].some((x) => x.toLowerCase().includes(needle));
+    })
     .sort((a, b) => b.match.total - a.match.total);
+}
+
+function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const t = useT();
+  return (
+    <label className="flex items-center gap-2.5 h-11 px-4 rounded-[14px] bg-cream border-[1.5px] border-ink focus-within:shadow-brut-sm">
+      <Search size={18} className="text-muted shrink-0" aria-hidden />
+      <span className="sr-only">{t('matches.search')}</span>
+      <input data-guide="search" value={value} onChange={(e) => onChange(e.target.value)} placeholder={t('matches.search')} className="flex-1 min-w-0 bg-transparent text-body-s focus:outline-none placeholder:text-muted" />
+    </label>
+  );
+}
+
+function BoostTag({ n }: { n: number }) {
+  const t = useT();
+  if (!n) return null;
+  return (
+    <span className="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-lime/30 text-green text-[11px] font-semibold">
+      <Award size={12} aria-hidden /> {t('match.boost', { n })}
+    </span>
+  );
 }
 
 function useApplied(trackId: string) {
@@ -60,7 +97,7 @@ function Filters({ value, onChange }: { value: Filter; onChange: (f: Filter) => 
 
 /* ---------------- S05 card ---------------- */
 
-function TrackCard({ track }: { track: Track }) {
+function TrackCard({ track }: { track: LiveTrack }) {
   const t = useT();
   const emp = useEmployer(track.employerId)!;
   const applied = useApplied(track.id);
@@ -70,7 +107,10 @@ function TrackCard({ track }: { track: Track }) {
         <div className="flex gap-3.5">
           <CompanyTile initials={emp.initials} color={emp.tile} size={44} />
           <div className="min-w-0">
-            <h2 className="text-h-s font-display">{track.shortTitle}</h2>
+            <h2 className="text-h-s font-display">
+              {track.shortTitle}
+              {track.createdInDemo && <span className="ml-2 align-middle hk-sticker inline-flex items-center h-5 px-1.5 rounded-[5px] bg-mango-tint text-mango-ink border border-mango-ink/30 font-mono text-[10px] font-semibold uppercase">{t('matches.new')}</span>}
+            </h2>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <span className="text-body-s text-muted">{emp.name}</span>
               <VerifiedBadge />
@@ -86,6 +126,16 @@ function TrackCard({ track }: { track: Track }) {
             <div className="text-caption text-ink">{t('match.fit')}</div>
           </div>
           <MatchBars match={track.match} />
+        </div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {track.job && (
+            <span className="inline-flex items-center gap-1.5 text-caption text-ink">
+              <Briefcase size={14} className="text-green" aria-hidden />
+              {track.job.position} · {peso(track.job.salaryMin)}–{peso(track.job.salaryMax)}
+              {t('job.perMonth')}
+            </span>
+          )}
+          <BoostTag n={track.boost} />
         </div>
         <div className="mt-3 flex items-center justify-between">
           <span className="inline-flex items-center gap-1.5 text-caption text-muted">
@@ -120,13 +170,15 @@ function Greeting() {
 function MatchesMobile() {
   const t = useT();
   const [filter, setFilter] = useState<Filter>('all');
-  const tracks = useLiveTracks(filter);
+  const [q, setQ] = useState('');
+  const tracks = useLiveTracks(filter, q);
   return (
     <>
       <AppHeader />
       <div className="px-5 pt-3 pb-6">
         <Greeting />
-        <div className="mt-4">
+        <div className="mt-4 space-y-3">
+          <SearchBox value={q} onChange={setQ} />
           <Filters value={filter} onChange={setFilter} />
         </div>
         <ul className="mt-4 space-y-3.5">
@@ -140,7 +192,7 @@ function MatchesMobile() {
   );
 }
 
-function ListItem({ track, selected }: { track: Track; selected: boolean }) {
+function ListItem({ track, selected }: { track: LiveTrack; selected: boolean }) {
   const t = useT();
   const emp = useEmployer(track.employerId)!;
   const applied = useApplied(track.id);
@@ -156,6 +208,10 @@ function ListItem({ track, selected }: { track: Track; selected: boolean }) {
           <div className="min-w-0 flex-1">
             <div className="text-h-s font-display">{track.shortTitle}</div>
             <div className="text-body-s text-muted">{emp.name}</div>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {track.createdInDemo && <span className="hk-sticker inline-flex items-center h-5 px-1.5 rounded-[5px] bg-mango-tint text-mango-ink border border-mango-ink/30 font-mono text-[10px] font-semibold uppercase">{t('matches.new')}</span>}
+              <BoostTag n={track.boost} />
+            </div>
           </div>
           <div className="text-right">
             <div className="font-display font-bold text-[22px] leading-[24px] text-green">{track.match.total}%</div>
@@ -174,7 +230,8 @@ function ListItem({ track, selected }: { track: Track; selected: boolean }) {
 function MatchesDesktop({ selectedId, applying }: { selectedId?: string; applying?: boolean }) {
   const t = useT();
   const [filter, setFilter] = useState<Filter>('all');
-  const tracks = useLiveTracks(filter);
+  const [q, setQ] = useState('');
+  const tracks = useLiveTracks(filter, q);
   const all = useLiveTracks('all');
   const sel = all.find((x) => x.id === selectedId) ?? tracks[0] ?? all[0];
   return (
@@ -183,7 +240,12 @@ function MatchesDesktop({ selectedId, applying }: { selectedId?: string; applyin
         <div>
           <Greeting />
         </div>
-        <Filters value={filter} onChange={setFilter} />
+        <div className="flex flex-col items-end gap-3">
+          <div className="w-[360px]">
+            <SearchBox value={q} onChange={setQ} />
+          </div>
+          <Filters value={filter} onChange={setFilter} />
+        </div>
       </div>
       <div className="mt-6 grid grid-cols-[400px_1fr] xl:grid-cols-[430px_1fr] gap-6 items-start">
         <ul className="space-y-3.5">
@@ -255,6 +317,61 @@ function Criteria({ track }: { track: Track }) {
   );
 }
 
+function JobCard({ track }: { track: Track }) {
+  const t = useT();
+  if (!track.job) return null;
+  return (
+    <div className="rounded-card border-[1.5px] border-ink bg-cream p-4 shadow-brut-sm">
+      <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-green flex items-center gap-1.5">
+        <Briefcase size={14} aria-hidden /> {t('job.waiting')}
+      </div>
+      <div className="mt-1.5 text-h-s font-display">{track.job.position}</div>
+      <div className="mt-0.5 font-mono text-[15px] font-semibold text-green">
+        {peso(track.job.salaryMin)}–{peso(track.job.salaryMax)}
+        <span className="text-muted font-normal text-[12px]">{t('job.perMonth')}</span>
+      </div>
+      <div className="text-caption text-muted">{track.job.type} · SSS, PhilHealth, Pag-IBIG</div>
+    </div>
+  );
+}
+
+function PrepCourses({ track }: { track: Track }) {
+  const t = useT();
+  const records = useDemo((s) => s.courseRecords);
+  const list = (track.prepCourseIds ?? []).map(courseById).filter(Boolean);
+  if (!list.length) return null;
+  return (
+    <div>
+      <h2 className="text-h-s font-display flex items-center gap-2">
+        <GraduationCap size={18} className="text-green" aria-hidden /> {t('learn.prepCourses')}
+      </h2>
+      <ul className="mt-2.5 space-y-2">
+        {list.map((c) => {
+          const done = records.some((r) => r.courseId === c!.id);
+          return (
+            <li key={c!.id}>
+              <Link to={`/learn/${c!.id}`} className="flex items-center gap-3 rounded-[14px] bg-cream border-[1.5px] border-ink/20 px-3.5 py-3 hover:border-ink focus-ring">
+                <span className="w-8 h-8 rounded-[8px] border-[1.5px] border-ink flex items-center justify-center shrink-0" style={{ background: c!.tile }}>
+                  <BookOpen size={15} className="text-white" aria-hidden />
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-label truncate" lang="en">
+                    {c!.title}
+                  </span>
+                  <span className="block text-caption text-muted">
+                    {c!.providerName} · {t('learn.hours', { n: c!.hours })} · {t('learn.free')}
+                  </span>
+                </span>
+                {done ? <Award size={18} className="text-green" aria-label={t('learn.done')} /> : <span className="text-caption text-green font-semibold">{t('learn.start')}</span>}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 function ReadyRow({ track }: { track: Track }) {
   const t = useT();
   const show = useDemo((s) => s.showLaunch);
@@ -290,10 +407,12 @@ function DetailPanel({ track }: { track: Track }) {
       <div className="p-6 space-y-4">
         <FactGrid track={track} />
         <div className="grid grid-cols-2 gap-5 items-start">
+          <JobCard track={track} />
           <Commitment track={track} />
           <Criteria track={track} />
         </div>
         <ReadyRow track={track} />
+        <PrepCourses track={track} />
         <div className="flex gap-3 pt-1">
           {applied ? (
             <Button to="/my-track">{t('track.viewMyTrack')}</Button>
@@ -344,9 +463,11 @@ function TrackDetailMobile({ track, applying }: { track: Track; applying?: boole
       </div>
       <div className="px-5 py-4 space-y-4 flex-1">
         <FactGrid track={track} />
-        <Commitment track={track} />
+        <JobCard track={track} />
+          <Commitment track={track} />
         <Criteria track={track} />
         <ReadyRow track={track} />
+        <PrepCourses track={track} />
       </div>
       <MobileFooter className="flex gap-3 space-y-0">
         {applied ? (

@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { Check, Clock, Download, FileText, ReceiptText, ShieldCheck } from 'lucide-react';
 import { PageHead } from '../../layouts/EmployerShell';
 import { Button, StatusPill, cx } from '../../components/ui';
 import { peso, useDemo } from '../../store';
 import { PRICING } from '../../data/seed';
-import { useToast, Th, Td, Table, Person, Note, Kpi } from './shared';
+import { useToast, Th, Td, Table, Person, Note, Kpi, ComposeModal, type ComposeSpec } from './shared';
 
 /* ---------------- E07 Billing ---------------- */
 
@@ -12,6 +13,7 @@ export function Billing() {
   const apps = useDemo((s) => s.applications);
   const seekers = useDemo((s) => s.seekers);
   const toast = useToast();
+  const [compose, setCompose] = useState<ComposeSpec | null>(null);
   const rows = hires.map((h) => {
     const app = apps.find((a) => a.id === h.applicationId)!;
     return { h, app, seeker: seekers.find((x) => x.id === app.seekerId)! };
@@ -78,11 +80,35 @@ export function Billing() {
                 <Td>{h.billed ? `${h.guaranteeDaysLeft ?? PRICING.guaranteeDays} days left` : `Starts ${h.startDate}`}</Td>
                 <Td>
                   {h.billed ? (
-                    <Button size="sm" variant="secondary" onClick={() => toast.show('Replacement request started (demo). Covered by the 90-day guarantee.')}>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() =>
+                        setCompose({
+                          title: `Request a replacement for ${seeker.firstName}`,
+                          to: 'Hakbang partner team',
+                          text: `${seeker.name} (${h.position}) left within the 90-day guarantee. Please match us with the next qualified trainee from the batch. Reason: `,
+                          send: 'Request replacement',
+                          done: 'Replacement requested. Covered by the 90-day guarantee, no extra fee.',
+                        })
+                      }
+                    >
                       Replace hire
                     </Button>
                   ) : (
-                    <Button size="sm" variant="secondary" onClick={() => toast.show(`Reminder sent to ${seeker.firstName} (demo).`)}>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() =>
+                        setCompose({
+                          title: `Remind ${seeker.firstName} to confirm`,
+                          to: seeker.name,
+                          text: `Hi ${seeker.firstName}! Congratulations again on your hire. Please open Hakbang and confirm that you signed your contract so we can finalise your start on ${h.startDate}.`,
+                          send: 'Send reminder',
+                          done: `Reminder sent to ${seeker.firstName}.`,
+                        })
+                      }
+                    >
                       Remind
                     </Button>
                   )}
@@ -93,6 +119,7 @@ export function Billing() {
         </Table>
       </div>
       <Note icon={FileText}>One invoice per month with 30-day terms. A hire is billed only after both you and the trainee confirm the contract.</Note>
+      {compose && <ComposeModal spec={compose} onClose={() => setCompose(null)} onSent={toast.show} />}
       {toast.el}
     </>
   );

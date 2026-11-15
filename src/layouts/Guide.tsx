@@ -14,8 +14,8 @@ interface Step {
   hint: string;
   role: Role;
   to: string;
-  /** data-guide hook to pulse on the page */
-  hook: string;
+  /** data-guide hook(s) to pulse on the page */
+  hook: string | string[];
   done: (s: State) => boolean;
   /** optional one-click action instead of doing it by hand */
   action?: { label: string; run: (s: State) => void };
@@ -25,7 +25,7 @@ const paoloApp = (s: State) => s.applications.find((a) => a.seekerId === PAOLO_I
 const statusIn = (s: State, list: string[]) => list.includes(paoloApp(s)?.status ?? '');
 
 /** The 5-minute presenter story, in order. A step is done when the demo state says so. */
-export const STEPS: Step[] = [
+export const PITCH_STEPS: Step[] = [
   {
     who: 'Paolo',
     title: 'Sign up and build a profile',
@@ -101,6 +101,70 @@ export const STEPS: Step[] = [
   },
 ];
 
+const demoTrack = (s: State) => s.tracks.find((t) => t.createdInDemo && t.status === 'live');
+
+/** Sir's MVP check (about 5 minutes): post → find → learn → profile → employer sees it. */
+export const MVP_STEPS: Step[] = [
+  {
+    who: 'Admin',
+    title: 'Verify BlueHarbor so it can post',
+    hint: 'Verification queue: Approve and verify. Only verified employers can publish openings.',
+    role: 'admin',
+    to: '/admin/verification',
+    hook: 'approve',
+    done: (s) => !!s.employers.find((e) => e.id === BLUEHARBOR_ID)?.verified,
+  },
+  {
+    who: 'Carla',
+    title: 'Post a new job opening',
+    hint: 'Tracks → Post a new opening. Set the job, pay, skills and a prep course, then publish.',
+    role: 'employer',
+    to: '/employer/tracks',
+    hook: ['post-open', 'post-next', 'post-publish'],
+    done: (s) => !!demoTrack(s),
+  },
+  {
+    who: 'Paolo',
+    title: 'Find the opening and apply',
+    hint: 'Matches: search for it (it’s tagged New), read the job and pay, then apply.',
+    role: 'seeker',
+    to: '/matches',
+    hook: ['search', 'apply'],
+    done: (s) => !!demoTrack(s) && s.applications.some((a) => a.seekerId === PAOLO_ID && a.trackId === demoTrack(s)!.id),
+  },
+  {
+    who: 'Paolo',
+    title: 'Finish a course in Hakbang Learn',
+    hint: 'Learn: open a course, go through the lessons and pass the quiz to earn a certificate.',
+    role: 'seeker',
+    to: '/learn',
+    hook: ['course-start', 'lesson-next', 'quiz-submit'],
+    done: (s) => s.courseRecords.length > 0,
+    action: {
+      label: 'Fast-forward',
+      run: (s) => s.ffFinishCourse(demoTrack(s)?.prepCourseIds?.[0] ?? 'excel-basics'),
+    },
+  },
+  {
+    who: 'Paolo',
+    title: 'See the certificate on the profile',
+    hint: 'Profile: the course is under “Courses completed” and its skills got a verified badge.',
+    role: 'seeker',
+    to: '/profile',
+    hook: 'none',
+    done: (s) => s.seen.profileCourses,
+  },
+  {
+    who: 'Carla',
+    title: 'See Paolo’s courses on his application',
+    hint: 'Candidates: open Paolo’s Learning column. Certificates and verified skills help her decide.',
+    role: 'employer',
+    to: '/employer/candidates',
+    hook: 'candidate-paolo',
+    done: (s) => s.seen.candidateProfile,
+  },
+];
+
 /** Handles `?fresh` (reset) and `?guide` (start the guide) on any route, then strips them. */
 export function useDemoParams() {
   const { pathname, search } = useLocation();
@@ -110,7 +174,10 @@ export function useDemoParams() {
     if (!q.has('fresh') && !q.has('guide')) return;
     const s = useDemo.getState();
     if (q.has('fresh')) s.reset();
-    if (q.has('guide')) s.setGuideOn(true);
+    if (q.has('guide')) {
+      s.setGuideOn(true);
+      s.setGuideMode(q.get('guide') === 'mvp' ? 'mvp' : 'pitch');
+    }
     q.delete('fresh');
     q.delete('guide');
     const rest = q.toString();
@@ -123,6 +190,7 @@ export function Guide() {
   const nav = useNavigate();
   const { pathname } = useLocation();
   const [min, setMin] = useState(false);
+  const STEPS = s.guideMode === 'mvp' ? MVP_STEPS : PITCH_STEPS;
   const idx = STEPS.findIndex((st) => !st.done(s));
   const step = idx === -1 ? null : STEPS[idx];
 
@@ -137,7 +205,8 @@ export function Guide() {
     s.setRole(st.role);
     nav(st.to);
   };
-  const pulse = step && step.hook !== 'none' ? `[data-guide="${step.hook}"]` : null;
+  const hooks = step ? (Array.isArray(step.hook) ? step.hook : [step.hook]).filter((h) => h !== 'none') : [];
+  const pulse = hooks.length ? hooks.map((h) => `[data-guide="${h}"]`).join(',') : null;
 
   if (min)
     return (
@@ -161,7 +230,24 @@ export function Guide() {
         className="fixed z-[75] inset-x-2 top-9 lg:inset-x-auto lg:top-auto lg:bottom-4 lg:right-4 lg:w-[360px] bg-cream text-ink border-[1.5px] border-ink rounded-[18px] shadow-brut p-4"
       >
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Presenter guide</span>
+          <div role="group" aria-label="Guide script" className="inline-flex p-[2px] rounded-full border-[1.5px] border-ink bg-paper">
+            {(
+              [
+                ['pitch', 'Pitch demo'],
+                ['mvp', 'MVP check'],
+              ] as const
+            ).map(([m, l]) => (
+              <button
+                key={m}
+                type="button"
+                aria-pressed={s.guideMode === m}
+                onClick={() => s.setGuideMode(m)}
+                className={cx('h-7 px-2.5 rounded-full font-mono text-[10.5px] font-semibold uppercase tracking-wider focus-ring', s.guideMode === m ? 'bg-ink text-cream' : 'text-muted')}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
           <span className="ml-auto flex gap-1">
             <button type="button" onClick={() => setMin(true)} aria-label="Minimise guide" className="w-8 h-8 rounded-full hover:bg-paper flex items-center justify-center focus-ring">
               <Minus size={16} />
@@ -225,7 +311,9 @@ export function Guide() {
         ) : (
           <div className="mt-3">
             <div className="text-title font-display">Story complete 🎉</div>
-            <p className="mt-1 text-body-s text-muted">Signup to hire to billing to verification, all shown.</p>
+            <p className="mt-1 text-body-s text-muted">
+              {s.guideMode === 'mvp' ? 'Post → find → learn → certificate → employer sees it. All shown.' : 'Signup to hire to billing to verification, all shown.'}
+            </p>
             <button
               type="button"
               onClick={() => {

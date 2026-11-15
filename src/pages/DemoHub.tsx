@@ -93,7 +93,21 @@ export function DemoHub() {
                 nav('/signup');
               }}
             >
-              Start guided demo (fresh data)
+              Start pitch demo (fresh data)
+            </Button>
+            <Button
+              variant="onDark"
+              block
+              icon={Compass}
+              onClick={() => {
+                s.reset();
+                s.setGuideOn(true);
+                s.setGuideMode('mvp');
+                s.setRole('admin');
+                nav('/admin/verification');
+              }}
+            >
+              Start MVP check (fresh data)
             </Button>
             <Button
               variant="onDarkOutline"

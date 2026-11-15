@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
-import { AlertCircle, Check, ShieldCheck, Users } from 'lucide-react';
-import { Avatar, Card, Toast, cx } from '../../components/ui';
+import { AlertCircle, Check, Send, ShieldCheck, Users } from 'lucide-react';
+import { Avatar, Button, Card, CloseButton, Modal, Toast, cx } from '../../components/ui';
 import { isPassed, useDemo } from '../../store';
 import { MAIN_TRACK_ID } from '../../data/seed';
 import type { Application, JobSeeker, Score } from '../../data/types';
@@ -106,3 +106,49 @@ export const scoreCell = (s: Score | undefined) => {
     </span>
   );
 };
+
+export interface ComposeSpec {
+  title: string;
+  to: string;
+  text: string;
+  send: string;
+  done: string;
+}
+
+/** Compose-and-send dialog for messages, reminders, reports and replacement requests. */
+export function ComposeModal({ spec, onClose, onSent }: { spec: ComposeSpec; onClose: () => void; onSent: (done: string) => void }) {
+  const [text, setText] = useState(spec.text);
+  return (
+    <Modal onClose={onClose} labelledBy="compose-title" width={560}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 id="compose-title" className="text-h-m">
+            {spec.title}
+          </h2>
+          <p className="text-body-s text-muted">To: {spec.to}</p>
+        </div>
+        <CloseButton onClick={onClose} />
+      </div>
+      <label className="block mt-4">
+        <span className="sr-only">Message</span>
+        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={5} className="w-full rounded-input border-[1.5px] border-ink bg-cream p-4 text-body focus:outline-none" />
+      </label>
+      <p className="mt-2 text-caption text-muted">Sent in the Hakbang app and by email. Contact numbers stay private.</p>
+      <div className="mt-5 flex justify-end gap-3">
+        <Button variant="secondary" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          icon={Send}
+          disabled={!text.trim()}
+          onClick={() => {
+            onSent(spec.done);
+            onClose();
+          }}
+        >
+          {spec.send}
+        </Button>
+      </div>
+    </Modal>
+  );
+}

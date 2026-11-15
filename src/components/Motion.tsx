@@ -57,7 +57,8 @@ export function Reveal({
 }
 
 /** Counts up to `to` when visible. Renders the final value for no-JS / reduced motion. */
-export function CountUp({ to, prefix = '', suffix = '', duration = 1200, className }: { to: number; prefix?: string; suffix?: string; duration?: number; className?: string }) {
+export function CountUp({ to, prefix = '', suffix = '', duration = 1200, decimals = 0, className }: { to: number; prefix?: string; suffix?: string; duration?: number; decimals?: number; className?: string }) {
+  const fmt = (v: number) => v.toLocaleString('en-PH', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   const { ref, inView } = useInView<HTMLSpanElement>();
   const [n, setN] = useState(() => (reduced() ? to : 0));
   useEffect(() => {
@@ -66,7 +67,7 @@ export function CountUp({ to, prefix = '', suffix = '', duration = 1200, classNa
     const t0 = performance.now();
     const tick = (t: number) => {
       const p = Math.min(1, (t - t0) / duration);
-      setN(Math.round(to * (1 - Math.pow(1 - p, 3))));
+      setN(to * (1 - Math.pow(1 - p, 3)));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -76,12 +77,12 @@ export function CountUp({ to, prefix = '', suffix = '', duration = 1200, classNa
     <span ref={ref} className={className}>
       <span className="sr-only">
         {prefix}
-        {to.toLocaleString('en-PH')}
+        {fmt(to)}
         {suffix}
       </span>
       <span aria-hidden>
         {prefix}
-        {n.toLocaleString('en-PH')}
+        {fmt(n)}
         {suffix}
       </span>
     </span>
