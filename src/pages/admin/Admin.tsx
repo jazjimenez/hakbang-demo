@@ -117,6 +117,7 @@ export function Queue() {
               Put on hold
             </Button>
             <Button
+              data-guide={sel.id === 'blueharbor' ? 'approve' : undefined}
               onClick={() => {
                 approve(sel.id);
                 setToast(`${sel.name} approved and verified.`);

@@ -64,6 +64,7 @@ export const strings = {
   'review.addSkill': ['Add skill', 'Add skill'],
   'review.save': ['I-save ang profile', 'Save profile'],
   'review.back': ['Bumalik', 'Back'],
+  'review.availDefault': ['Weekends, at weekdays after 6 PM', 'Weekends, and weekdays after 6 PM'],
   'review.newSkill': ['Bagong skill', 'New skill'], // demo
 
   // S05 / D03

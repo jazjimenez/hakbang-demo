@@ -40,6 +40,9 @@ interface Data {
   resumeCustom: Record<number, string>;
   reminders: Reminders;
   readAlerts: boolean;
+  /** presenter guide overlay */
+  guideOn: boolean;
+  billingSeen: boolean;
 }
 
 interface Actions {
@@ -77,6 +80,8 @@ interface Actions {
   setResumeValues: (n: number, v: string[]) => void;
   setResumeCustom: (n: number, v: string) => void;
   markAlertsRead: () => void;
+  setGuideOn: (v: boolean) => void;
+  markBillingSeen: () => void;
 
   ffAccept: () => void;
   ffPassModule1: () => void;
@@ -102,6 +107,8 @@ const seed = (): Data => ({
   resumeCustom: {},
   reminders: { email: true, push: true, messenger: true, sms: false, deadlines: true, sessions: true, results: true },
   readAlerts: false,
+  guideOn: false,
+  billingSeen: false,
 });
 
 const passed = (s: Score | undefined) => typeof s === 'number' && s >= 80;
@@ -132,7 +139,7 @@ export const useDemo = create<Data & Actions>()(
         setLang: (lang) => set({ lang }),
         setShowLaunch: (showLaunch) => set({ showLaunch }),
         setRole: (role) => set({ role }),
-        reset: () => set({ ...seed(), lang: get().lang, role: get().role }),
+        reset: () => set({ ...seed(), lang: get().lang, role: get().role, guideOn: get().guideOn }),
 
         signUp: () => set((s) => ({ onboarding: { ...s.onboarding, signedUp: true } })),
         consent: () => set((s) => ({ onboarding: { ...s.onboarding, signedUp: true, consented: true } })),
@@ -210,6 +217,8 @@ export const useDemo = create<Data & Actions>()(
         setResumeValues: (n, v) => set((s) => ({ resumeValues: { ...s.resumeValues, [n]: v } })),
         setResumeCustom: (n, v) => set((s) => ({ resumeCustom: { ...s.resumeCustom, [n]: v } })),
         markAlertsRead: () => set({ readAlerts: true }),
+        setGuideOn: (guideOn) => set({ guideOn }),
+        markBillingSeen: () => set((s) => (s.billingSeen ? s : { billingSeen: true })),
 
         ffAccept: () => {
           ensurePaoloApplied();
@@ -237,7 +246,9 @@ export const useDemo = create<Data & Actions>()(
     },
     {
       name: STORAGE_KEY,
-      version: 1,
+      // v2: hire dates moved to the April demo clock; older saved data is replaced with the seed
+      version: 2,
+      migrate: (persisted, version) => (version < 2 ? (seed() as unknown as Data & Actions) : (persisted as Data & Actions)),
       storage: createJSONStorage(() => {
         try {
           return localStorage;

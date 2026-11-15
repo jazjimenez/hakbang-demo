@@ -1,0 +1,50 @@
+name: Demo story tests
+
+# Feature branches and pull requests. (main and design/bold run the same
+# tests inside the deploy workflow, before anything is published.)
+on:
+  push:
+    branches-ignore: [main, design/bold]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Story, guide, a11y and phone tests
+        run: npx playwright test
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: test-results
+          retention-days: 7
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Lighthouse (report only)
+        run: |
+          npx vite preview --port 4174 --strictPort &
+          sleep 3
+          export CHROME_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())")
+          npx -y lighthouse@12 http://localhost:4174/ --quiet --chrome-flags="--headless=new --no-sandbox" \
+            --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=lh.json
+          node scripts/lighthouse-summary.mjs lh.json >> "$GITHUB_STEP_SUMMARY"
+          node scripts/lighthouse-summary.mjs lh.json

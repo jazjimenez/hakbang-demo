@@ -298,7 +298,9 @@ function DetailPanel({ track }: { track: Track }) {
           {applied ? (
             <Button to="/my-track">{t('track.viewMyTrack')}</Button>
           ) : (
-            <Button onClick={() => nav(`/tracks/${track.id}/apply`)}>{t('track.apply')}</Button>
+            <Button onClick={() => nav(`/tracks/${track.id}/apply`)} data-guide={track.id === 'back-office' ? 'apply' : undefined}>
+              {t('track.apply')}
+            </Button>
           )}
           <Button variant="secondary" size="lg" icon={Flag} className="!text-red" onClick={() => nav(`/report?track=${track.id}`)}>
             {t('track.report')}
@@ -352,7 +354,7 @@ function TrackDetailMobile({ track, applying }: { track: Track; applying?: boole
             {t('track.viewMyTrack')}
           </Button>
         ) : (
-          <Button className="flex-1" onClick={() => nav(`/tracks/${track.id}/apply`)}>
+          <Button className="flex-1" onClick={() => nav(`/tracks/${track.id}/apply`)} data-guide={track.id === 'back-office' ? 'apply' : undefined}>
             {t('track.apply')}
           </Button>
         )}
@@ -404,7 +406,7 @@ function ApplyDialog({ track, desktop }: { track: Track; desktop?: boolean }) {
       </div>
       <p className="mt-3 text-caption text-muted">{t('apply.answer')}</p>
       <div className={cx('mt-5 gap-3', desktop ? 'flex flex-row-reverse' : 'flex flex-col')}>
-        <Button block={!desktop} disabled={!ok} onClick={submit}>
+        <Button block={!desktop} disabled={!ok} onClick={submit} data-guide="apply">
           {t('apply.cta')}
         </Button>
         <Button block={!desktop} variant="secondary" onClick={close}>

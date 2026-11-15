@@ -324,18 +324,47 @@ function useEscape(onClose: () => void) {
   }, [onClose]);
 }
 
-function useFocusFirst<T extends HTMLElement>() {
+/**
+ * Moves focus into the dialog, keeps Tab / Shift+Tab inside it, and gives focus back
+ * to whatever opened it when it closes.
+ */
+function useFocusTrap<T extends HTMLElement>() {
   const ref = useRef<T>(null);
   useEffect(() => {
-    const el = ref.current?.querySelector<HTMLElement>('button, [href], input, textarea, select');
-    el?.focus();
+    const root = ref.current;
+    if (!root) return;
+    const opener = document.activeElement as HTMLElement | null;
+    const focusables = () =>
+      [...root.querySelectorAll<HTMLElement>('button:not([disabled]), [href], input:not([disabled]), textarea, select, [tabindex]:not([tabindex="-1"])')].filter(
+        (el) => el.offsetParent !== null,
+      );
+    focusables()[0]?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const els = focusables();
+      if (!els.length) return;
+      const first = els[0];
+      const last = els[els.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    root.addEventListener('keydown', onKey);
+    return () => {
+      root.removeEventListener('keydown', onKey);
+      opener?.focus?.();
+    };
   }, []);
   return ref;
 }
 
 export function Modal({ onClose, children, width = 560, labelledBy }: { onClose: () => void; children: ReactNode; width?: number; labelledBy?: string }) {
   useEscape(onClose);
-  const ref = useFocusFirst<HTMLDivElement>();
+  const ref = useFocusTrap<HTMLDivElement>();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#4a5e52]/60 animate-fade" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={labelledBy} className="bg-white rounded-panel shadow-float w-full max-h-[90vh] overflow-auto p-6 sm:p-8 animate-pop" style={{ maxWidth: width }}>
@@ -347,7 +376,7 @@ export function Modal({ onClose, children, width = 560, labelledBy }: { onClose:
 
 export function BottomSheet({ onClose, children, labelledBy }: { onClose: () => void; children: ReactNode; labelledBy?: string }) {
   useEscape(onClose);
-  const ref = useFocusFirst<HTMLDivElement>();
+  const ref = useFocusTrap<HTMLDivElement>();
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-deep/70 animate-fade" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={labelledBy} className="bg-white w-full max-w-[480px] rounded-t-sheet px-5 pt-3 pb-8 max-h-[92vh] overflow-auto animate-sheet">

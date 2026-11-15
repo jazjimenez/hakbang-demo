@@ -227,6 +227,6 @@ export const seedApplications: Application[] = [
 ];
 
 export const seedHires: Hire[] = [
-  { applicationId: 'a-liza', startDate: 'May 10', feePhp: 2500, billed: true, guaranteeDaysLeft: 83, position: 'Back Office Associate', contract: 'Regular, with SSS, PhilHealth, and Pag-IBIG' },
-  { applicationId: 'a-jon', startDate: 'May 10', feePhp: 2500, billed: true, guaranteeDaysLeft: 83, position: 'Back Office Associate', contract: 'Regular, with SSS, PhilHealth, and Pag-IBIG' },
+  { applicationId: 'a-liza', startDate: 'Mar 31', feePhp: 2500, billed: true, guaranteeDaysLeft: 68, position: 'Back Office Associate', contract: 'Regular, with SSS, PhilHealth, and Pag-IBIG' },
+  { applicationId: 'a-jon', startDate: 'Mar 31', feePhp: 2500, billed: true, guaranteeDaysLeft: 68, position: 'Back Office Associate', contract: 'Regular, with SSS, PhilHealth, and Pag-IBIG' },
 ];

@@ -98,7 +98,7 @@ export function Signup() {
             <p className="mt-2 text-body text-muted">{t('signup.createSub')}</p>
             <Field className="mt-6" label={t('signup.emailLabel')} type="email" defaultValue="paolo.reyes@example.com" autoComplete="off" />
             <Field className="mt-4" label={t('signup.passwordLabel')} type="password" defaultValue="demo-password" autoComplete="off" />
-            <Button type="submit" block className="mt-5" onClick={next}>
+            <Button type="submit" block className="mt-5" onClick={next} data-guide="onboard">
               {t('signup.email')}
             </Button>
             <div className="my-5 flex items-center gap-3 text-caption text-muted">
@@ -137,7 +137,7 @@ export function Signup() {
           <Promises className="mt-6 inline-flex flex-col items-start mx-auto text-left" />
         </div>
         <div className="mt-8">
-          <Button variant="onDark" block onClick={next}>
+          <Button variant="onDark" block onClick={next} data-guide="onboard">
             {t('signup.email')}
           </Button>
           <div className="my-4 flex items-center gap-3 text-caption text-white/70">
@@ -207,6 +207,7 @@ export function Consent() {
           </Checkbox>
           <Button
             block
+            data-guide="onboard"
             disabled={!agree}
             onClick={() => {
               s.consent();
@@ -257,6 +258,7 @@ function Dropzone({ onPick, big }: { onPick: () => void; big?: boolean }) {
   return (
     <button
       type="button"
+      data-guide="onboard"
       onClick={onPick}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
@@ -329,7 +331,7 @@ function UploadMobile() {
           </div>
         </div>
         <MobileFooter>
-          <Button block disabled={state !== 'done'} onClick={() => nav('/onboarding/review')}>
+          <Button block disabled={state !== 'done'} onClick={() => nav('/onboarding/review')} data-guide="onboard">
             {t('upload.cta')}
           </Button>
           <button type="button" onClick={() => nav('/onboarding/review?manual=1')} className="w-full text-center text-label text-green py-1 focus-ring rounded">
@@ -341,7 +343,10 @@ function UploadMobile() {
   );
 }
 
+const SEED_AVAIL = 'Weekends, and weekdays after 6 PM';
+
 function useProfileForm() {
+  const t = useT();
   const p = usePaolo();
   const manual = new URLSearchParams(useLocation().search).has('manual');
   const [f, setF] = useState({
@@ -350,7 +355,8 @@ function useProfileForm() {
     school: manual ? '' : p.school,
     gradYear: manual ? '' : String(p.gradYear),
     city: manual ? '' : p.city,
-    availability: manual ? '' : p.availability,
+    // seed availability is stored in English; show the Figma Filipino copy in FIL mode
+    availability: manual ? '' : p.availability === SEED_AVAIL ? t('review.availDefault') : p.availability,
     skills: manual ? [] : p.skills,
   });
   return { f, setF, ai: !manual };
@@ -480,7 +486,7 @@ function ReviewMobile() {
           </div>
         </div>
         <MobileFooter>
-          <Button block onClick={save}>
+          <Button block onClick={save} data-guide="onboard">
             {t('review.save')}
           </Button>
         </MobileFooter>
@@ -530,7 +536,9 @@ function BuildProfileDesktop() {
               <Button variant="secondary" onClick={() => nav('/consent')}>
                 {t('review.back')}
               </Button>
-              <Button onClick={save}>{t('review.save')}</Button>
+              <Button onClick={save} data-guide="onboard">
+                {t('review.save')}
+              </Button>
             </div>
           </section>
         </div>

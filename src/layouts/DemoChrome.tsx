@@ -4,6 +4,7 @@ import { Building2, FastForward, LayoutGrid, RotateCcw, ShieldCheck, SlidersHori
 import { useDemo } from '../store';
 import { LangToggle, Switch, cx } from '../components/ui';
 import type { Role } from '../data/types';
+import { Guide, useDemoParams } from './Guide';
 
 export function roleHome(role: Role, profileSaved: boolean) {
   if (role === 'employer') return '/employer/overview';
@@ -89,6 +90,14 @@ export function DemoControls({ open, setOpen }: { open: boolean; setOpen: (v: bo
             <Switch checked={s.showLaunch} onChange={() => s.setShowLaunch(!s.showLaunch)} label="Show Launch features" />
           </div>
 
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-body-s">
+              Presenter guide
+              <span className="block text-caption text-muted">Step-by-step card for the 5-minute story</span>
+            </span>
+            <Switch checked={s.guideOn} onChange={() => s.setGuideOn(!s.guideOn)} label="Presenter guide" />
+          </div>
+
           <p className="text-caption text-muted mb-2 flex items-center gap-1.5">
             <FastForward size={14} aria-hidden /> Jump to step
           </p>
@@ -143,6 +152,7 @@ export function DemoControls({ open, setOpen }: { open: boolean; setOpen: (v: bo
 export default function DemoChrome() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  useDemoParams();
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -153,6 +163,7 @@ export default function DemoChrome() {
         <Outlet />
       </Suspense>
       <DemoControls open={open} setOpen={setOpen} />
+      <Guide />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, Building2, RotateCcw, ShieldCheck, User } from 'lucide-react';
+import { ArrowRight, Building2, Compass, RotateCcw, ShieldCheck, User } from 'lucide-react';
 import { Logo, Swoosh } from '../components/Brand';
 import { Button, LangToggle, LaunchTag, Switch, cx } from '../components/ui';
 import { useDemo } from '../store';
@@ -83,6 +83,19 @@ export function DemoHub() {
               <Switch checked={s.showLaunch} onChange={() => s.setShowLaunch(!s.showLaunch)} label="Show Launch features" />
             </div>
             <Button
+              variant="lime"
+              block
+              icon={Compass}
+              onClick={() => {
+                s.reset();
+                s.setGuideOn(true);
+                s.setRole('seeker');
+                nav('/signup');
+              }}
+            >
+              Start guided demo (fresh data)
+            </Button>
+            <Button
               variant="onDarkOutline"
               block
               icon={RotateCcw}
@@ -106,7 +119,10 @@ export function DemoHub() {
                 </li>
               ))}
             </ol>
-            <p className="mt-4 text-caption text-white/60">The Demo button (bottom-left on every page) switches roles, language, Pilot/Launch, and fast-forwards.</p>
+            <p className="mt-4 text-caption text-white/60">
+              The Demo button switches roles, language, Pilot/Launch, and fast-forwards. Share <span className="font-mono text-lime">#/demo?fresh</span> to give
+              someone a clean start, or <span className="font-mono text-lime">#/?fresh&amp;guide</span> to open with the guide on.
+            </p>
           </div>
         </div>
       </div>

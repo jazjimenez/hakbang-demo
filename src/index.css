@@ -280,3 +280,9 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   .hk-drop { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
+
+/* presenter guide: pulse the control the presenter should press next */
+@keyframes hk-guide {
+  0%, 100% { outline-color: #e8912a; }
+  50% { outline-color: rgba(232, 145, 42, 0.25); }
+}

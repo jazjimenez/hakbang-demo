@@ -274,7 +274,7 @@ export function Hired() {
           </div>
         </div>
         <div className="mt-10 space-y-3 w-full max-w-[420px] mx-auto">
-          <Button variant="onDark" block onClick={() => confirm(app!.id)}>
+          <Button variant="onDark" block onClick={() => confirm(app!.id)} data-guide="confirm-hire">
             {t('hired.yes')}
           </Button>
           <Button variant="onDarkOutline" block onClick={() => nav('/report?about=hire')}>
