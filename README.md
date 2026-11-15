@@ -28,6 +28,18 @@ The **Demo** button (bottom-left on desktop, in the top banner on phones) switch
 7. Admin → **Approve and verify** BlueHarbor → Carla's "Post a track" unlocks.
 8. (Launch) Carla adds an endorsement → it appears on Paolo's Endorsements and Profile.
 
+### MVP check (about 5 minutes)
+
+Open `#/demo` → **Start MVP check**, or share `#/admin/verification?fresh&guide=mvp`. The guide walks:
+admin verifies BlueHarbor → Carla posts a new opening (job, pay, skills, prep course) → Paolo searches, finds it and applies →
+Paolo finishes a Hakbang Learn course (lessons + quiz) → the certificate and verified skills appear on his profile and raise his match →
+Carla opens Paolo's application and sees the certificate.
+
+Routes: `#/learn` (catalog), `#/learn/:courseId`, `#/learn/:courseId/:lessonId`, `#/employer/tracks`, `#/contact`, `#/legal/terms`, `#/support`.
+
+The landing page tells the pitch story: the problem (sourced PSA figures in `src/data/facts.ts`), how it works, safety, the app,
+impact (graduate → community → country, with a calculator), employers, FAQ.
+
 ## Run locally
 
 ```bash
