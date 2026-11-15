@@ -22,19 +22,9 @@ const H2 = 'font-display font-extrabold text-[34px] leading-[36px] lg:text-[52px
 const STEP_H = [120, 215, 310, 405];
 const STEP_FILL = ['#0A4A35', '#0D563D', '#0F6345', '#127050'];
 
-function FloatCard({ className, children, delay, float }: { className?: string; children: ReactNode; delay: number; float: number }) {
-  return (
-    <div
-      className={cx('absolute bg-cream rounded-[14px] border-[1.5px] border-ink shadow-brut-sm px-4 py-3.5 text-ink hk-card', className)}
-      style={{ '--d': `${delay}ms`, '--f': `${float}s` } as CSSProperties}
-    >
-      {children}
-    </div>
-  );
-}
-
 function Staircase() {
   const t = useT();
+  const labels = ['x.s1', 'x.s2', 'x.s3', 'x.s4'].map((k) => t(k));
   return (
     <div className="absolute left-0 top-0 w-[560px] h-[520px] origin-top-left scale-[0.62] sm:scale-[0.8] lg:scale-[0.9] xl:scale-100" aria-hidden>
       <svg viewBox="0 0 560 520" className="absolute inset-0 w-full h-full overflow-visible">
@@ -43,21 +33,42 @@ function Staircase() {
             <line x1="0" y1="0" x2="0" y2="10" stroke="#ffffff" strokeOpacity=".05" strokeWidth="4" />
           </pattern>
         </defs>
-        {STEP_H.map((h, i) => (
-          <g key={i} className="hk-rise-step" style={d(200 + i * 150)}>
-            {/* steps run past the box so they meet the bottom of the hero */}
-            <rect x={i * 140} y={520 - h} width={140} height={h + 400} fill={STEP_FILL[i]} />
-            <rect x={i * 140} y={520 - h} width={140} height={h + 400} fill="url(#hk-hatch)" />
-            <rect x={i * 140} y={520 - h} width={140} height={7} fill="#5DB250" />
-            <text x={i * 140 + 16} y={520 - h + 84} fontFamily="Bricolage Grotesque, sans-serif" fontWeight={800} fontSize={72} fill="none" stroke="#ffffff" strokeOpacity=".22" strokeWidth={1.5}>
-              0{i + 1}
-            </text>
-          </g>
-        ))}
+        {STEP_H.map((h, i) => {
+          const last = i === STEP_H.length - 1;
+          return (
+            <g key={i} className="hk-rise-step" style={d(200 + i * 150)}>
+              {/* steps run past the box so they meet the bottom of the hero */}
+              <rect x={i * 140} y={520 - h} width={140} height={h + 400} fill={STEP_FILL[i]} />
+              <rect x={i * 140} y={520 - h} width={140} height={h + 400} fill="url(#hk-hatch)" />
+              <rect x={i * 140} y={520 - h} width={140} height={7} fill="#5DB250" />
+              {/* riser seam */}
+              {i > 0 && <rect x={i * 140} y={520 - h} width={1.5} height={h + 400} fill="#023B2A" opacity=".55" />}
+              {/* floor markings: numerals sit in one clean row, under every card */}
+              <text
+                x={i * 140 + 14}
+                y={482}
+                fontFamily="Bricolage Grotesque, sans-serif"
+                fontWeight={800}
+                fontSize={64}
+                letterSpacing={-2}
+                fill={last ? '#5DB250' : 'none'}
+                stroke={last ? 'none' : '#ffffff'}
+                strokeOpacity=".4"
+                strokeWidth={1.4}
+              >
+                0{i + 1}
+              </text>
+              <rect x={i * 140 + 16} y={494} width={18} height={2} fill={last ? '#5DB250' : '#ffffff'} opacity={last ? 1 : 0.4} />
+              <text x={i * 140 + 40} y={499} fontFamily="IBM Plex Mono, monospace" fontWeight={600} fontSize={10.5} letterSpacing={1.6} fill="#ffffff" fillOpacity={last ? 0.95 : 0.6}>
+                {labels[i].toUpperCase()}
+              </text>
+            </g>
+          );
+        })}
       </svg>
 
       {/* hand-drawn note */}
-      <div className="absolute left-[110px] top-[22px] hk-rise" style={d(1700)}>
+      <div className="absolute left-[110px] top-[22px] hk-rise" style={d(1900)}>
         <span className="font-serif italic text-[26px] text-lime leading-none whitespace-nowrap">{t('x.note')}</span>
         <svg width="90" height="44" viewBox="0 0 90 44" className="absolute -right-[96px] top-[2px]" fill="none">
           <path d="M2 28 C 30 2, 60 2, 84 22" stroke="#5DB250" strokeWidth="2" strokeLinecap="round" strokeDasharray="1 6" />
@@ -65,47 +76,52 @@ function Staircase() {
         </svg>
       </div>
 
-      <FloatCard className="left-[8px] top-[322px] w-[230px]" delay={750} float={6.5}>
-        <div className="flex items-center gap-2.5">
-          <Avatar initials="PR" size={36} />
-          <div>
-            <div className="text-label">{t('l.card.profile')}</div>
-            <div className="text-caption text-muted">{t('l.card.profileD')}</div>
+      {/* each card stands on its own tread (bottom = step height), never over a numeral */}
+      <StepCard step={0} left={12} width={220} delay={800}>
+        <Avatar initials="PR" size={36} />
+        <div>
+          <div className="text-label">{t('l.card.profile')}</div>
+          <div className="text-caption text-muted">{t('l.card.profileD')}</div>
+        </div>
+      </StepCard>
+      <StepCard step={1} left={152} width={252} delay={1000}>
+        <span className="w-9 h-9 rounded-[8px] bg-deep text-white text-caption font-semibold flex items-center justify-center shrink-0">BH</span>
+        <div className="flex-1 min-w-0">
+          <div className="text-label truncate">Back Office Associate</div>
+          <div className="text-caption text-muted flex items-center gap-1">
+            BlueHarbor CX <ShieldCheck size={13} className="text-green" aria-label="Verified" />
           </div>
         </div>
-      </FloatCard>
-      <FloatCard className="left-[100px] top-[191px] w-[270px]" delay={950} float={7.5}>
-        <div className="flex items-center gap-2.5">
-          <span className="w-9 h-9 rounded-[8px] bg-deep text-white text-caption font-semibold flex items-center justify-center">BH</span>
-          <div className="flex-1">
-            <div className="text-label">Back Office Associate</div>
-            <div className="text-caption text-muted">BlueHarbor CX</div>
-          </div>
-          <div className="text-right">
-            <div className="font-mono font-semibold text-[19px] text-green leading-[22px]">86%</div>
-            <div className="font-mono text-[10px] uppercase tracking-wider text-muted">{t('match.short')}</div>
-          </div>
+        <div className="text-right">
+          <div className="font-mono font-semibold text-[19px] text-green leading-[22px]">86%</div>
+          <div className="font-mono text-[10px] uppercase tracking-wider text-muted">{t('match.short')}</div>
         </div>
-        <VerifiedBadge className="mt-2.5" />
-      </FloatCard>
-      <FloatCard className="left-[300px] top-[128px] w-[210px]" delay={1150} float={5.5}>
-        <div className="flex items-center gap-2.5">
-          <IconTile icon={Check} size={32} />
-          <div>
-            <div className="text-label">{t('l.card.passed')}</div>
-            <div className="text-caption text-muted">{t('l.card.passedD')}</div>
-          </div>
+      </StepCard>
+      <StepCard step={2} left={292} width={200} delay={1200}>
+        <IconTile icon={Check} size={32} />
+        <div>
+          <div className="text-label">{t('l.card.passed')}</div>
+          <div className="text-caption text-muted">{t('l.card.passedD')}</div>
         </div>
-      </FloatCard>
-      <FloatCard className="left-[362px] top-[38px] w-[190px] !bg-lime" delay={1400} float={6}>
-        <div className="flex items-center gap-2.5">
-          <IconTile icon={Star} size={32} tone="white" />
-          <div>
-            <div className="text-label text-deep">{t('l.card.hired')}</div>
-            <div className="text-caption text-deep/80">{t('l.card.hiredD')}</div>
-          </div>
+      </StepCard>
+      <StepCard step={3} left={372} width={188} delay={1450} lime>
+        <IconTile icon={Star} size={32} tone="white" />
+        <div>
+          <div className="text-label text-deep">{t('l.card.hired')}</div>
+          <div className="text-caption text-deep/80">{t('l.card.hiredD')}</div>
         </div>
-      </FloatCard>
+      </StepCard>
+    </div>
+  );
+}
+
+function StepCard({ step, left, width, delay, lime, children }: { step: number; left: number; width: number; delay: number; lime?: boolean; children: ReactNode }) {
+  return (
+    <div
+      className={cx('absolute rounded-[12px] border-[1.5px] border-ink shadow-brut-sm px-3.5 py-3 text-ink hk-drop flex items-center gap-2.5', lime ? 'bg-lime' : 'bg-cream')}
+      style={{ left, width, bottom: STEP_H[step] - 1, '--d': `${delay}ms` } as CSSProperties}
+    >
+      {children}
     </div>
   );
 }

@@ -432,6 +432,10 @@ export const strings = {
   'x.stamp': ['LIBRE • WALANG BAYAD • KAHIT KAILAN • ', 'FREE • NO FEES • NOT EVER • '],
   'x.note': ['dito ka papunta', 'this is where you’re headed'],
   'x.step': ['Hakbang', 'Step'],
+  'x.s1': ['Profile', 'Profile'],
+  'x.s2': ['Match', 'Match'],
+  'x.s3': ['Training', 'Training'],
+  'x.s4': ['Trabaho', 'Hired'],
   'x.receipt': ['Resibo ng employer', 'Employer receipt'],
 } as const satisfies Record<string, readonly [string, string]>;
 
