@@ -757,7 +757,7 @@ export default function Landing() {
                 ]}
               />
               <FooterCol title={t('l.ft.partners')} items={[[t('l.ft.career'), () => nav('/contact?topic=school')], [t('l.ft.peso'), () => nav('/contact?topic=school')]]} />
-              <FooterCol title={t('l.ft.help')} items={[['FAQ', () => scrollTo('faq')], [t('l.ft.report'), () => nav('/report')], [t('l.ft.privacy'), () => nav('/legal/privacy')], [t('l.ft.terms'), () => nav('/legal/terms')]]} />
+              <FooterCol title={t('l.ft.help')} items={[['FAQ', () => scrollTo('faq')], [t('l.ft.report'), () => nav('/report')], [t('l.ft.privacy'), () => nav('/legal/privacy')], [t('l.ft.terms'), () => nav('/legal/terms')], ['Photo credits', () => nav('/legal/credits')]]} />
             </div>
           </div>
           <div className="mt-12 pt-6 border-t border-white/15 flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.08em] text-white/60">

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Building2, Check, ChevronRight, FileText, Lock, Plus, Sparkles, Upload as UploadIcon, Users, X } from 'lucide-react';
 import { Logo, NavBrand, Swoosh } from '../../components/Brand';
+import { HeroPhoto } from '../../components/HeroPhoto';
 import { Accent, Button, Checkbox, Field, IconTile, LangToggle, ProgressBar, TopBar, cx, useIsDesktop } from '../../components/ui';
 import { MobileFooter } from '../../layouts/SeekerShell';
 import { useT } from '../../i18n';
@@ -83,8 +84,8 @@ export function Signup() {
       <div className="min-h-[calc(100vh-28px)] grid grid-cols-[minmax(0,800px)_1fr] bg-white">
         <div className="relative bg-deep text-white overflow-hidden px-[72px] py-16 flex flex-col justify-center">
           <Swoosh className="w-[900px] -left-[160px] top-[220px]" opacity={0.18} />
-          {/* TODO(team): hero photo placeholder */}
-          <div className="relative rounded-panel border border-dashed border-white/30 bg-white/5 h-[300px] flex items-end p-6 text-caption text-white/60">{t('l.heroPhoto')}</div>
+          {/* TODO(team): temporary third-party photo, see src/data/credits.ts */}
+          <HeroPhoto className="relative h-[300px]" placeholder={t('l.heroPhoto')} />
           <div className="relative mt-8">
             <Logo reversed height={40} />
             <h1 className="mt-6 font-display font-extrabold text-[44px] leading-[44px] tracking-[-0.04em] [&_em]:text-lime"><Accent text={t('signup.headline')} /></h1>
@@ -125,12 +126,12 @@ export function Signup() {
     <div className="relative min-h-[calc(100vh-28px)] bg-deep text-white overflow-hidden">
       <Swoosh className="w-[760px] -left-[220px] top-[260px]" opacity={0.16} />
       <div className="relative max-w-[480px] mx-auto px-5 pt-5 pb-10 flex flex-col min-h-[calc(100vh-28px)]">
-        <div className="flex items-start justify-between gap-3">
-          {/* TODO(team): hero photo placeholder */}
-          <span className="text-caption text-white/50 pt-2">{t('l.heroPhoto')}</span>
+        <div className="flex justify-end">
           <LangToggle />
         </div>
-        <div className="flex-1 flex flex-col justify-center text-center pt-10">
+        {/* TODO(team): temporary third-party photo, see src/data/credits.ts */}
+        <HeroPhoto className="mt-3 h-[150px]" placeholder={t('l.heroPhoto')} compact />
+        <div className="flex-1 flex flex-col justify-center text-center pt-5">
           <Logo reversed height={44} className="mx-auto" />
           <h1 className="mt-6 font-display font-extrabold text-[40px] leading-[40px] tracking-[-0.04em] [&_em]:text-lime"><Accent text={t('signup.headline')} /></h1>
           <p className="mt-4 text-body text-white/85">{t('signup.sub')}</p>

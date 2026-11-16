@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Building2, Check, GraduationCap, Send, User } from 'lucide-react';
 import { NavBrand } from '../components/Brand';
 import { Accent, Button, Field, TopBar, cx } from '../components/ui';
+import { CREDITS } from '../data/credits';
 import { useT } from '../i18n';
 
 function SiteShell({ children }: { children: React.ReactNode }) {
@@ -115,6 +116,7 @@ const LEGAL = {
 
 export function Legal() {
   const { doc } = useParams();
+  if (doc === 'credits') return <Credits />;
   const d = LEGAL[doc === 'terms' ? 'terms' : 'privacy'];
   return (
     <SiteShell>
@@ -213,5 +215,39 @@ export function Support() {
         </form>
       </div>
     </div>
+  );
+}
+
+/* ---------------- Photo credits ---------------- */
+
+function Credits() {
+  return (
+    <SiteShell>
+      <h1 className="font-display font-extrabold text-[40px] leading-[42px] tracking-[-0.035em]">Photo credits</h1>
+      <p className="mt-3 text-body text-muted">
+        Hakbang is a student demo prototype. People, companies and data in the app are fictional. These images belong to their owners and are used
+        temporarily as placeholders, not for any commercial purpose. If you own one and want it removed, contact us and we will take it down right away.
+      </p>
+      <ul className="mt-8 space-y-4">
+        {CREDITS.map((c) => (
+          <li key={c.src} className="bg-cream border-[1.5px] border-ink rounded-[16px] p-4 shadow-brut-sm flex gap-4 items-start">
+            <img src={c.src} alt={c.alt} referrerPolicy="no-referrer" className="w-[120px] h-[72px] object-cover rounded-[10px] border border-ink/20 shrink-0" />
+            <div className="min-w-0">
+              <div className="text-title">{c.owner}</div>
+              <p className="mt-1 text-body-s text-muted">{c.note}</p>
+              <a href={c.sourceUrl} target="_blank" rel="noreferrer" className="mt-1 inline-block text-caption text-green underline break-all">
+                {c.sourceUrl}
+              </a>
+            </div>
+          </li>
+        ))}
+        {CREDITS.length === 0 && <li className="text-body text-muted">No third-party photos are in use.</li>}
+      </ul>
+      <p className="mt-6 text-body-s">
+        <Link to="/contact" className="text-green underline focus-ring rounded">
+          Contact us about an image →
+        </Link>
+      </p>
+    </SiteShell>
   );
 }
