@@ -1,13 +1,14 @@
 name: Deploy to GitHub Pages
 
-# One Pages site, two builds:
+# One Pages site, three builds:
 #   main         -> https://<user>.github.io/<repo>/
 #   design/bold  -> https://<user>.github.io/<repo>/bold/
-# A push to either branch rebuilds both, so neither link goes stale.
+#   site-polish  -> https://<user>.github.io/<repo>/polish/  (review preview)
+# A push to any of them rebuilds all, so no link goes stale.
 # The presenter-story tests must pass before anything is published.
 on:
   push:
-    branches: [main, design/bold]
+    branches: [main, design/bold, site-polish]
   workflow_dispatch:
 
 permissions:
@@ -50,6 +51,10 @@ jobs:
         with:
           ref: design/bold
           path: bold-src
+      - uses: actions/checkout@v7
+        with:
+          ref: site-polish
+          path: polish-src
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -57,6 +62,7 @@ jobs:
           cache-dependency-path: |
             main-src/package-lock.json
             bold-src/package-lock.json
+            polish-src/package-lock.json
 
       - name: Build main
         working-directory: main-src
@@ -70,11 +76,18 @@ jobs:
         env:
           VITE_BASE: /${{ github.event.repository.name }}/bold/
 
+      - name: Build site-polish
+        working-directory: polish-src
+        run: npm ci && npm run build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/polish/
+
       - name: Assemble site
         run: |
-          mkdir -p site/bold
+          mkdir -p site/bold site/polish
           cp -r main-src/dist/. site/
           cp -r bold-src/dist/. site/bold/
+          cp -r polish-src/dist/. site/polish/
 
       - name: Link-preview image (og.png) from the main build
         working-directory: main-src
@@ -86,6 +99,7 @@ jobs:
           sleep 3
           node scripts/og.mjs "http://localhost:4175/${{ github.event.repository.name }}/" ../site/og.png
           cp ../site/og.png ../site/bold/og.png
+          cp ../site/og.png ../site/polish/og.png
 
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
