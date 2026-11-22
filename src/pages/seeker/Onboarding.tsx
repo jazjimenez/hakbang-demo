@@ -81,7 +81,7 @@ export function Signup() {
       next();
     };
     return (
-      <div className="min-h-[calc(100vh-28px)] grid grid-cols-[minmax(0,800px)_1fr] bg-white">
+      <div role="main" className="min-h-[calc(100vh-28px)] grid grid-cols-[minmax(0,800px)_1fr] bg-white">
         <div className="relative bg-deep text-white overflow-hidden px-[72px] py-16 flex flex-col justify-center">
           <Swoosh className="w-[900px] -left-[160px] top-[220px]" opacity={0.18} />
           {/* TODO(team): temporary third-party photo, see src/data/credits.ts */}
@@ -123,7 +123,7 @@ export function Signup() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-28px)] bg-deep text-white overflow-hidden">
+    <div role="main" className="relative min-h-[calc(100vh-28px)] bg-deep text-white overflow-hidden">
       <Swoosh className="w-[760px] -left-[220px] top-[260px]" opacity={0.16} />
       <div className="relative max-w-[480px] mx-auto px-5 pt-5 pb-10 flex flex-col min-h-[calc(100vh-28px)]">
         <div className="flex justify-end">
@@ -175,7 +175,7 @@ export function Consent() {
     [Lock, 'consent.control', 'consent.controlD'],
   ] as const;
   return (
-    <div className="min-h-[calc(100vh-28px)] bg-paper">
+    <div role="main" className="min-h-[calc(100vh-28px)] bg-paper">
       <div className="max-w-[480px] lg:max-w-[640px] mx-auto min-h-[calc(100vh-28px)] flex flex-col lg:py-10">
         <TopBar title={t('consent.top')} back="/signup" />
         <div className="px-5 pb-6 flex-1">
@@ -318,7 +318,7 @@ function UploadMobile() {
   const nav = useNavigate();
   const { state, pct, start } = useFakeUpload();
   return (
-    <div className="min-h-[calc(100vh-28px)] bg-paper">
+    <div role="main" className="min-h-[calc(100vh-28px)] bg-paper">
       <div className="max-w-[480px] mx-auto min-h-[calc(100vh-28px)] flex flex-col">
         <TopBar title={t('build.top')} back="/consent" />
         <div className="px-5 flex-1">
@@ -470,7 +470,7 @@ function ReviewMobile() {
   const form = useProfileForm();
   const save = useSave(form);
   return (
-    <div className="min-h-[calc(100vh-28px)] bg-paper">
+    <div role="main" className="min-h-[calc(100vh-28px)] bg-paper">
       <div className="max-w-[480px] mx-auto min-h-[calc(100vh-28px)] flex flex-col">
         <TopBar title={t('build.top')} back="/onboarding/upload" />
         <div className="px-5 pb-6 flex-1">

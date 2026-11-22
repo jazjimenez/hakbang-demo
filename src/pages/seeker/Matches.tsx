@@ -430,13 +430,29 @@ function DetailPanel({ track }: { track: Track }) {
   );
 }
 
+function TrackNotFound() {
+  const t = useT();
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-16 max-w-[480px] mx-auto">
+      <span className="w-14 h-14 rounded-full bg-mint text-green flex items-center justify-center" aria-hidden>
+        <Search size={24} />
+      </span>
+      <h1 className="mt-5 text-h-l">{t('track.notFound')}</h1>
+      <p className="mt-2 text-body text-muted">{t('track.notFoundSub')}</p>
+      <Button to="/matches" className="mt-6">
+        {t('mytrack.seeMatches')}
+      </Button>
+    </div>
+  );
+}
+
 /* ---------------- S06 / S07 (mobile) and D03 / D04 (desktop) ---------------- */
 
 export function TrackDetail({ applying }: { applying?: boolean }) {
   const { trackId } = useParams();
   const desktop = useIsDesktop();
   const track = useTrack(trackId);
-  if (!track) return <p className="p-8 text-body">Track not found.</p>;
+  if (!track) return <TrackNotFound />;
   if (desktop) return <MatchesDesktop selectedId={track.id} applying={applying} />;
   return <TrackDetailMobile track={track} applying={applying} />;
 }
@@ -559,7 +575,7 @@ export function SkillGap() {
   const saveTrack = useDemo((s) => s.saveTrack);
   const applied = useApplied(trackId ?? '');
   const [toast, setToast] = useState<string | null>(null);
-  if (!track || !emp) return null;
+  if (!track || !emp) return <TrackNotFound />;
   const req = track.requiredSkills.length ? track.requiredSkills : p.skills;
   const has = (s: string) => p.skills.some((x) => x.toLowerCase() === s.toLowerCase());
   const missing = req.filter((s) => !has(s));

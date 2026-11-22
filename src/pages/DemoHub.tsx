@@ -30,7 +30,7 @@ export function DemoHub() {
     ['admin', 'I’m Hakbang admin', 'Verification queue for employer documents and safety reports.', ShieldCheck],
   ];
   return (
-    <div className="min-h-[calc(100vh-28px)] bg-deep text-white relative overflow-hidden">
+    <div role="main" className="min-h-[calc(100vh-28px)] bg-deep text-white relative overflow-hidden">
       <Swoosh className="w-[1200px] -right-[240px] top-[80px]" opacity={0.12} />
       <div className="relative max-w-[1100px] mx-auto px-5 py-10 lg:py-14">
         <div className="flex items-center justify-between gap-4">

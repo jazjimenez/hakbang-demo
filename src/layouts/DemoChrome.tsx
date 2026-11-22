@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, type MouseEvent } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Building2, FastForward, LayoutGrid, RotateCcw, ShieldCheck, SlidersHorizontal, User, X } from 'lucide-react';
 import { useDemo } from '../store';
@@ -19,7 +19,7 @@ export function DemoBanner({ onOpen }: { onOpen: () => void }) {
         <span className="sm:hidden">Demo prototype. All data is fictional.</span>
         <span className="hidden sm:inline">Demo prototype. All people, companies, and data are fictional.</span>
       </span>
-      <button type="button" onClick={onOpen} className="lg:hidden shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-white/15 text-white font-semibold focus-ring" aria-label="Open demo controls">
+      <button type="button" onClick={onOpen} className="lg:hidden shrink-0 inline-flex items-center gap-1 h-6 px-2.5 rounded-full relative after:absolute after:-inset-y-2 after:-inset-x-1 after:content-[''] bg-white/15 text-white font-semibold focus-ring" aria-label="Open demo controls">
         <SlidersHorizontal size={13} aria-hidden /> Demo
       </button>
     </div>
@@ -149,6 +149,32 @@ export function DemoControls({ open, setOpen }: { open: boolean; setOpen: (v: bo
   );
 }
 
+/**
+ * First tab stop on every page. Hash routing means `href="#main"` would change
+ * the route, so this moves focus by hand: to the page's h1 (skips the site
+ * header and nav), else to the main landmark itself.
+ */
+function SkipLink() {
+  const skip = (e: MouseEvent) => {
+    e.preventDefault();
+    const main = document.querySelector<HTMLElement>('main, [role="main"]');
+    const target = main?.querySelector<HTMLElement>('h1') ?? main;
+    if (!target) return;
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ block: 'start' });
+  };
+  return (
+    <a
+      href="#"
+      onClick={skip}
+      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-btn focus:bg-white focus:text-ink focus:text-label focus:shadow-float"
+    >
+      Skip to content
+    </a>
+  );
+}
+
 export default function DemoChrome() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
@@ -158,6 +184,7 @@ export default function DemoChrome() {
   }, [pathname]);
   return (
     <>
+      <SkipLink />
       <DemoBanner onOpen={() => setOpen(true)} />
       <Suspense fallback={<div className="min-h-[calc(100vh-28px)] bg-paper" aria-busy="true" />}>
         <Outlet />
