@@ -19,7 +19,7 @@ function useCertificates(seeker: JobSeeker) {
 function LearningCell({ seeker, onOpen }: { seeker: JobSeeker; onOpen: () => void }) {
   const certs = useCertificates(seeker);
   return (
-    <button type="button" onClick={onOpen} className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-full border-[1.5px] border-ink/25 bg-cream text-caption font-semibold hover:border-ink focus-ring" data-guide={seeker.id === PAOLO_ID ? 'candidate-paolo' : undefined}>
+    <button type="button" onClick={onOpen} className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-full border-[1.5px] border-ink/25 bg-cream text-caption font-semibold whitespace-nowrap hover:border-ink focus-ring" data-guide={seeker.id === PAOLO_ID ? 'candidate-paolo' : undefined}>
       <GraduationCap size={14} className={certs.length ? 'text-green' : 'text-muted'} aria-hidden />
       {certs.length} course{certs.length === 1 ? '' : 's'}
     </button>
@@ -170,15 +170,14 @@ export function Candidates() {
           ['declined', `Declined ${groups.declined.length}`],
         ]}
       />
-      <Table minWidth={980}>
+      <Table minWidth={940}>
         <thead className="bg-paper">
           <tr>
             {tab === 'waiting' && <Th className="w-10"> </Th>}
             <Th>Candidate</Th>
             <Th>Degree</Th>
             <Th>Learning</Th>
-            <Th>Location</Th>
-            <Th>Availability</Th>
+            <Th>Where &amp; when</Th>
             <Th>Contact</Th>
             <Th>Match and why</Th>
             <Th> </Th>
@@ -207,19 +206,21 @@ export function Candidates() {
               <Td>
                 <LearningCell seeker={seeker} onOpen={() => setViewing(app.id)} />
               </Td>
-              <Td>{seeker.city}</Td>
-              <Td>{seeker.availability}</Td>
+              <Td>
+                <div>{seeker.city}</div>
+                <div className="text-caption text-muted">{seeker.availability}</div>
+              </Td>
               <Td>
                 {app.status === 'applied' || app.status === 'declined' ? (
-                  <span className="inline-flex items-center gap-1 text-muted text-caption">
-                    <Lock size={13} aria-hidden /> Hidden until accepted
+                  <span className="inline-flex items-center gap-1 text-muted text-caption whitespace-nowrap" title="Contact details unlock when you accept">
+                    <Lock size={13} aria-hidden /> Until accepted
                   </span>
                 ) : (
                   <span className="text-caption">+63 917 ••• {String(1000 + seeker.name.length * 317).slice(-4)}</span>
                 )}
               </Td>
               <Td>
-                <div className="flex items-center gap-3 min-w-[190px]">
+                <div className="flex items-center gap-3 min-w-[176px]">
                   <span className="font-display font-bold text-h-m text-green w-12">{liveMatch(seeker.id, app).total}%</span>
                   <dl className="space-y-0.5 text-caption flex-1">
                     {(
@@ -259,7 +260,7 @@ export function Candidates() {
           ))}
           {list.length === 0 && (
             <tr>
-              <td colSpan={9} className="text-center text-muted py-10 text-body-s">
+              <td colSpan={8} className="text-center text-muted py-10 text-body-s">
                 {tab === 'waiting' ? 'No candidates waiting. New matches appear here when job seekers apply.' : 'Nobody here yet.'}
               </td>
             </tr>

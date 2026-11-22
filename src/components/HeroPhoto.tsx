@@ -17,7 +17,8 @@ export function HeroPhoto({ className, placeholder, compact }: { className?: str
         src={HERO_PHOTO.src}
         alt={HERO_PHOTO.alt}
         loading="eager"
-        fetchPriority="high"
+        // React 18 only passes the lowercase attribute through to the DOM
+        {...{ fetchpriority: 'high' }}
         decoding="async"
         referrerPolicy="no-referrer"
         onError={() => setFailed(true)}

@@ -109,7 +109,7 @@ function Staircase() {
         <IconTile icon={Star} size={32} tone="white" />
         <div>
           <div className="text-label text-deep">{t('l.card.hired')}</div>
-          <div className="text-caption text-deep/80">{t('l.card.hiredD')}</div>
+          <div className="text-caption text-deep">{t('l.card.hiredD')}</div>
         </div>
       </StepCard>
     </div>
@@ -324,7 +324,7 @@ function Impact() {
                 <dd className="font-mono font-semibold text-[26px] leading-[30px] tabular-nums" data-testid={`impact-${i}`}>
                   {v}
                 </dd>
-                <dd className={cx('mt-1 text-caption', i === 0 ? 'text-deep/80' : 'text-muted')}>{l}</dd>
+                <dd className={cx('mt-1 text-caption', i === 0 ? 'text-deep' : 'text-muted')}>{l}</dd>
               </div>
             ))}
           </dl>
@@ -581,10 +581,10 @@ export default function Landing() {
                 </div>
                 <VerifiedBadge className="mt-3 !bg-transparent !px-0" />
               </div>
-              <div className="rounded-[22px] bg-paper border-[1.5px] border-ink shadow-brut p-7">
+              <div className="rounded-[22px] bg-paper border-[1.5px] border-ink shadow-brut p-5 sm:p-7">
                 <h3 className="text-h-m">{t('l.f.progress')}</h3>
                 <p className="mt-1.5 text-body-s text-muted">{t('l.f.progressD')}</p>
-                <div className="hk-trail mt-5 bg-cream border-[1.5px] border-ink rounded-[14px] px-2 py-4">
+                <div className="hk-trail mt-5 bg-cream border-[1.5px] border-ink rounded-[14px] px-1 sm:px-2 py-4">
                   <Trail
                     orientation="horizontal"
                     size={24}
@@ -678,7 +678,7 @@ export default function Landing() {
             </span>
             <div className="flex-1">
               <h2 className="text-h-m text-deep">{t('l.peso')}</h2>
-              <p className="mt-1.5 text-body text-deep/80">{t('l.pesoD')}</p>
+              <p className="mt-1.5 text-body text-deep">{t('l.pesoD')}</p>
             </div>
             <Button variant="secondary" onClick={() => nav('/contact?topic=school')}>
               {t('l.pesoCta')}

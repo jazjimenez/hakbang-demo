@@ -40,7 +40,7 @@ export function Trail({ steps, orientation = 'vertical', size = 26, compact }: {
               <span className={cx('flex-1 h-1 rounded-l-full', i === steps.length - 1 ? 'invisible' : s.state === 'done' ? 'bg-lime' : 'bg-line')} />
             </div>
             <span className="sr-only">{srState[s.state]}: </span>
-            <span className={cx('mt-3 px-1', compact ? 'text-caption' : 'text-body-s', s.state === 'current' ? 'text-ink font-semibold text-[15px]' : s.state === 'done' ? 'text-ink' : 'text-muted')}>{s.label}</span>
+            <span className={cx('mt-3', compact ? 'px-0.5 sm:px-1 text-[11px] leading-[14px] sm:text-caption' : 'px-1 text-body-s', s.state === 'current' ? cx('text-ink font-semibold', !compact && 'text-[15px]') : s.state === 'done' ? 'text-ink' : 'text-muted')}>{s.label}</span>
             {s.sub && <span className={cx('mt-1 text-caption', s.state === 'current' ? 'text-green' : 'text-muted')}>{s.sub}</span>}
           </li>
         ))}
