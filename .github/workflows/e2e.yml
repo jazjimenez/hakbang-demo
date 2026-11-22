@@ -1,10 +1,10 @@
 name: Demo story tests
 
-# Feature branches and pull requests. (main and design/bold run the same
+# Feature branches and pull requests. (main runs the same
 # tests inside the deploy workflow, before anything is published.)
 on:
   push:
-    branches-ignore: [main, design/bold]
+    branches-ignore: [main]
   pull_request:
   workflow_dispatch:
 

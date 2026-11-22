@@ -55,7 +55,7 @@ Then open http://localhost:5173. `npm run build` type-checks and builds to `dist
 
 Routing uses `HashRouter`, so every route survives a refresh on the Pages sub-path.
 
-The workflow publishes two builds to the same Pages site: `main` at `/<repo>/` and the `design/bold` branch (the experimental "steps" redesign) at `/<repo>/bold/`. A push to either branch rebuilds both.
+Only `main` is published. The old `/bold/` and `/polish/` previews were merged into it; `public/bold` and `public/polish` hold small redirect pages so old links still land on the demo.
 
 ## Project notes
 
