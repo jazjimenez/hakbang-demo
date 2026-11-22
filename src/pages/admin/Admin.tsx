@@ -101,7 +101,7 @@ export function Queue() {
           </ul>
           <label className="block mt-5">
             <span className="text-caption text-muted">Note to employer</span>
-            <input value={note} onChange={(e) => setNote(e.target.value)} className="mt-1.5 w-full h-12 rounded-input border border-line px-3.5 text-body focus:outline-none focus:border-green" />
+            <input value={note} onChange={(e) => setNote(e.target.value)} className="mt-1.5 w-full h-12 rounded-input border border-line px-3.5 text-body focus:border-green" />
           </label>
           <div className="mt-5 flex flex-wrap justify-end gap-3">
             <Button variant="danger" onClick={() => setToast('Rejected (demo). The employer is notified with your note.')}>

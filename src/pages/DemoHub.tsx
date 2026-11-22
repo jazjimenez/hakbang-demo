@@ -50,7 +50,7 @@ export function DemoHub() {
               key={r}
               type="button"
               onClick={() => go(r)}
-              className={cx('text-left rounded-panel p-6 bg-cream text-ink border-[1.5px] border-ink shadow-brut-lime hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all duration-150 focus-ring group', s.role === r && 'ring-2 ring-lime ring-offset-2 ring-offset-deep')}
+              className={cx('text-left rounded-panel p-6 bg-cream text-ink border-[1.5px] border-ink shadow-brut-lime hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-[transform,box-shadow] duration-150 focus-ring group', s.role === r && 'ring-2 ring-lime ring-offset-2 ring-offset-deep')}
             >
               <span className="w-12 h-12 rounded-[14px] bg-mint text-green flex items-center justify-center">
                 <Icon size={24} aria-hidden />

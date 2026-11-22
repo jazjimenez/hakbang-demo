@@ -456,7 +456,7 @@ export function Report() {
           onChange={(e) => setDetails(e.target.value)}
           placeholder={t('report.tell')}
           rows={4}
-          className="mt-3 w-full rounded-[16px] border border-line bg-white p-4 text-body focus:outline-none focus:border-green focus:ring-2 focus:ring-green/20"
+          className="mt-3 w-full rounded-[16px] border border-line bg-white p-4 text-body focus:border-green"
         />
         <p className="mt-3 flex items-center gap-2.5 bg-mint rounded-[14px] px-4 py-3 text-body-s">
           <ShieldCheck size={18} className="text-green" aria-hidden />

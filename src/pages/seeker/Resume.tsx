@@ -271,7 +271,7 @@ export function ResumeFix() {
               onChange={(e) => setCustom(e.target.value)}
               rows={4}
               aria-label={t('resume.edit')}
-              className="mt-2 w-full rounded-input border border-green bg-white p-3 text-body focus:outline-none"
+              className="mt-2 w-full rounded-input border border-green bg-white p-3 text-body"
               lang="en"
             />
           ) : (

@@ -190,7 +190,7 @@ function Faq({ q, a, defaultOpen, n }: { q: string; a: string; defaultOpen?: boo
       <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="w-full flex items-center gap-4 text-left px-5 sm:px-6 py-5 focus-ring rounded-[16px]">
         <span className="font-mono text-[12px] text-muted w-6 shrink-0">0{n}</span>
         <span className="flex-1 text-title">{q}</span>
-        <span className={cx('w-[30px] h-[30px] rounded-full border-[1.5px] border-ink flex items-center justify-center shrink-0 transition-all duration-300', open ? 'bg-lime rotate-180' : 'bg-cream')}>
+        <span className={cx('w-[30px] h-[30px] rounded-full border-[1.5px] border-ink flex items-center justify-center shrink-0 transition-[transform,background-color] duration-300', open ? 'bg-lime rotate-180' : 'bg-cream')}>
           {open ? <Minus size={16} /> : <Plus size={16} />}
         </span>
       </button>
@@ -500,7 +500,7 @@ export default function Landing() {
               ] as const
             ).map(([h, dsc, Icon], i) => (
               <li key={h}>
-                <div className="flex gap-4 bg-cream border-[1.5px] border-ink rounded-[18px] p-5 sm:px-6 shadow-brut-sm transition-all duration-200 hover:shadow-brut hover:-translate-x-0.5 hover:-translate-y-0.5">
+                <div className="flex gap-4 bg-cream border-[1.5px] border-ink rounded-[18px] p-5 sm:px-6 shadow-brut-sm transition-[transform,box-shadow] duration-200 hover:shadow-brut hover:-translate-x-0.5 hover:-translate-y-0.5">
                   <span className="font-mono text-[12px] text-muted pt-3 w-6 shrink-0">0{i + 1}</span>
                   <IconTile icon={Icon} />
                   <div>

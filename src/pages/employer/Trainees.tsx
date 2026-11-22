@@ -300,7 +300,7 @@ function HireModal({ appId }: { appId: string }) {
   if (!app || !seeker) return null;
   const fee = hires < PRICING.pilotBatch ? PRICING.pilotRate : PRICING.standardRate;
   const canHire = app.status === 'passed';
-  const input = 'mt-1.5 w-full h-12 rounded-input border border-line px-3.5 text-body bg-white focus:outline-none focus:border-green';
+  const input = 'mt-1.5 w-full h-12 rounded-input border border-line px-3.5 text-body bg-white focus:border-green';
   return (
     <Modal onClose={close} labelledBy="hire-title" width={560}>
       <div className="flex items-start gap-3">
@@ -431,7 +431,7 @@ function EndorseModal({ appId }: { appId: string }) {
           <span>Short note, shown on their profile</span>
           <span>{note.length} of 200</span>
         </span>
-        <textarea value={note} maxLength={200} onChange={(e) => setNote(e.target.value)} rows={2} className="mt-1.5 w-full rounded-input border-2 border-green px-3.5 py-3 text-body focus:outline-none" />
+        <textarea value={note} maxLength={200} onChange={(e) => setNote(e.target.value)} rows={2} className="mt-1.5 w-full rounded-input border-2 border-green px-3.5 py-3 text-body" />
       </label>
       <Note icon={ShieldCheck}>This stays on {seeker.firstName}’s profile even if they are not hired. Other verified employers can see it.</Note>
       <div className="mt-6 flex justify-end gap-3">

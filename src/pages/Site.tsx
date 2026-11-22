@@ -74,13 +74,13 @@ export function Contact() {
             </div>
           </fieldset>
           <div className="grid sm:grid-cols-2 gap-4">
-            <Field label={t('contact.name')} required />
-            <Field label={t('contact.email')} type="email" required />
-            {who !== 'seeker' && <Field className="sm:col-span-2" label={t('contact.org')} />}
+            <Field label={t('contact.name')} name="name" autoComplete="name" required />
+            <Field label={t('contact.email')} type="email" name="email" autoComplete="email" spellCheck={false} required />
+            {who !== 'seeker' && <Field className="sm:col-span-2" label={t('contact.org')} name="organization" autoComplete="organization" />}
           </div>
           <label className="block">
             <span className="text-body-s text-muted">{t('contact.msg')}</span>
-            <textarea rows={4} className="mt-2 w-full rounded-input border border-line bg-white p-4 text-body focus:outline-none focus:border-green" />
+            <textarea name="message" rows={4} className="mt-2 w-full rounded-input border border-line bg-white p-4 text-body focus:border-green" />
           </label>
           <Button type="submit" icon={Send}>
             {t('contact.send')}
@@ -208,7 +208,7 @@ export function Support() {
           <label className="sr-only" htmlFor="support-msg">
             {t('support.placeholder')}
           </label>
-          <input id="support-msg" value={text} onChange={(e) => setText(e.target.value)} placeholder={t('support.placeholder')} className="flex-1 h-12 rounded-[14px] border-[1.5px] border-ink bg-cream px-4 text-body focus:outline-none" />
+          <input id="support-msg" value={text} onChange={(e) => setText(e.target.value)} placeholder={t('support.placeholder')} className="flex-1 h-12 rounded-[14px] border-[1.5px] border-ink bg-cream px-4 text-body" />
           <Button type="submit" aria-label="Send" icon={Send} disabled={!text.trim()}>
             <span className="sr-only">Send</span>
           </Button>
@@ -231,7 +231,7 @@ function Credits() {
       <ul className="mt-8 space-y-4">
         {CREDITS.map((c) => (
           <li key={c.src} className="bg-cream border-[1.5px] border-ink rounded-[16px] p-4 shadow-brut-sm flex gap-4 items-start">
-            <img src={c.src} alt={c.alt} referrerPolicy="no-referrer" className="w-[120px] h-[72px] object-cover rounded-[10px] border border-ink/20 shrink-0" />
+            <img src={c.src} alt={c.alt} width={120} height={72} loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-[120px] h-[72px] object-cover rounded-[10px] border border-ink/20 shrink-0" />
             <div className="min-w-0">
               <div className="text-title">{c.owner}</div>
               <p className="mt-1 text-body-s text-muted">{c.note}</p>

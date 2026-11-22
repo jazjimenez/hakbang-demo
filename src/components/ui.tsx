@@ -166,7 +166,7 @@ export function IconTile({
 }) {
   const tones = {
     mint: 'bg-mint text-green',
-    mango: 'bg-mango-tint text-mango',
+    mango: 'bg-mango-tint text-mango-ink',
     white: 'bg-white text-green',
     red: 'bg-red-tint text-red',
     lime: 'bg-lime text-deep',
@@ -221,7 +221,7 @@ export function Field({
       </label>
       <input
         id={id}
-        className="w-full h-[50px] rounded-input border border-line bg-white px-4 text-body text-ink focus:outline-none focus:border-green focus:ring-2 focus:ring-green/20"
+        className="w-full h-[50px] rounded-input border border-line bg-white px-4 text-body text-ink focus:border-green"
         {...rest}
       />
     </div>
@@ -256,7 +256,7 @@ export function Switch({ checked, onChange, label }: { checked: boolean; onChang
       onClick={onChange}
       className={cx('relative w-[46px] h-[28px] rounded-full transition-colors shrink-0 focus-ring', checked ? 'bg-green' : 'bg-line')}
     >
-      <span className={cx('absolute top-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-all', checked ? 'left-[21px]' : 'left-[3px]')} />
+      <span className={cx('absolute top-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform duration-150 left-[3px]', checked && 'translate-x-[18px]')} />
     </button>
   );
 }
@@ -375,7 +375,7 @@ export function Modal({ onClose, children, width = 560, labelledBy }: { onClose:
   const ref = useFocusTrap<HTMLDivElement>();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#4a5e52]/60 animate-fade" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={labelledBy} className="bg-white rounded-panel shadow-float w-full max-h-[90vh] overflow-auto p-6 sm:p-8 animate-pop" style={{ maxWidth: width }}>
+      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={labelledBy} className="bg-white rounded-panel shadow-float w-full max-h-[90vh] overflow-auto overscroll-contain p-6 sm:p-8 animate-pop" style={{ maxWidth: width }}>
         {children}
       </div>
     </div>
@@ -387,7 +387,7 @@ export function BottomSheet({ onClose, children, labelledBy }: { onClose: () => 
   const ref = useFocusTrap<HTMLDivElement>();
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-deep/70 animate-fade" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={labelledBy} className="bg-white w-full max-w-[480px] rounded-t-sheet px-5 pt-3 pb-8 max-h-[92vh] overflow-auto animate-sheet">
+      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={labelledBy} className="bg-white w-full max-w-[480px] rounded-t-sheet px-5 pt-3 pb-8 max-h-[92vh] overflow-auto overscroll-contain animate-sheet">
         <div className="mx-auto mb-4 w-10 h-1.5 rounded-full bg-line" aria-hidden />
         {children}
       </div>

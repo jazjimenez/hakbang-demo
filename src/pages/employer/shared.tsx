@@ -131,7 +131,7 @@ export function ComposeModal({ spec, onClose, onSent }: { spec: ComposeSpec; onC
       </div>
       <label className="block mt-4">
         <span className="sr-only">Message</span>
-        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={5} className="w-full rounded-input border-[1.5px] border-ink bg-cream p-4 text-body focus:outline-none" />
+        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={5} className="w-full rounded-input border-[1.5px] border-ink bg-cream p-4 text-body" />
       </label>
       <p className="mt-2 text-caption text-muted">Sent in the Hakbang app and by email. Contact numbers stay private.</p>
       <div className="mt-5 flex justify-end gap-3">

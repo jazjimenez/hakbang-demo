@@ -412,7 +412,7 @@ function ProfileFields({ form, desktop }: { form: ReturnType<typeof useProfileFo
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                   onBlur={addSkill}
-                  className="h-9 w-40 rounded-full border border-green px-3.5 text-label focus:outline-none"
+                  className="h-9 w-40 rounded-full border border-green px-3.5 text-label"
                 />
               </form>
             ) : (

@@ -316,7 +316,7 @@ export const strings = {
   'tab.learn': ['Kurso', 'Learn'],
   'learn.title': ['Hakbang *Learn*', 'Hakbang *Learn*'],
   'learn.sub': ['Libreng maiikling kurso mula sa employers at sa Hakbang. Bawat matapos mo, may certificate at skill na idinadagdag sa profile mo.', 'Free short courses from employers and Hakbang. Every course you finish adds a certificate and skills to your profile.'],
-  'learn.search': ['Hanapin ang kurso o skill', 'Search courses or skills'],
+  'learn.search': ['Hanapin ang kurso o skill…', 'Search courses or skills…'],
   'learn.all': ['Lahat', 'All'],
   'learn.forYou': ['Para sa matches mo', 'For your matches'],
   'learn.cat.excel': ['Excel at data', 'Excel and data'],
@@ -369,7 +369,7 @@ export const strings = {
   // job offer + openings search
   'job.waiting': ['Trabahong naghihintay', 'The job waiting for you'],
   'job.perMonth': ['/buwan', '/month'],
-  'matches.search': ['Hanapin ang track, kumpanya, o skill', 'Search tracks, companies or skills'],
+  'matches.search': ['Hanapin ang track, kumpanya, o skill…', 'Search tracks, companies or skills…'],
   'matches.new': ['Bago', 'New'],
   // contact / legal / support
   'contact.title': ['Kausapin ang *team*', 'Talk to the *team*'],
@@ -386,7 +386,7 @@ export const strings = {
   'contact.sent': ['Natanggap namin! Sasagot kami within 24 hours.', 'Got it! We’ll reply within 24 hours.'],
   'support.title': ['Support chat', 'Support chat'],
   'support.hi': ['Hi Paolo! Ako si Ana ng Hakbang support. Ano ang maitutulong ko?', 'Hi Paolo! I’m Ana from Hakbang support. How can I help?'],
-  'support.placeholder': ['I-type ang mensahe', 'Type a message'],
+  'support.placeholder': ['I-type ang mensahe…', 'Type a message…'],
   'support.reply': ['Salamat! Natanggap ko na. Babalikan kita within 24 hours dito at sa email mo.', 'Thanks! I’ve got it. I’ll get back to you within 24 hours here and by email.'],
   'support.q1': ['Paano ko malalaman kung verified ang employer?', 'How do I know an employer is verified?'],
   'support.q2': ['Humingi ng bayad ang employer', 'An employer asked me for money'],
