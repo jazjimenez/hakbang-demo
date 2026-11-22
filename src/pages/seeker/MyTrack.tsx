@@ -314,7 +314,7 @@ export function Hired() {
     );
   }
   return (
-    <div className="relative min-h-[calc(100vh-28px)] bg-deep text-white overflow-hidden">
+    <div role="main" className="relative min-h-[calc(100vh-28px)] bg-deep text-white overflow-hidden">
       <Swoosh className="w-[900px] -left-[260px] bottom-[-120px]" opacity={0.2} />
       <div className="relative max-w-[480px] lg:max-w-[640px] mx-auto px-5 pt-6 pb-10 min-h-[calc(100vh-28px)] flex flex-col">{body}</div>
     </div>

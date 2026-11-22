@@ -442,7 +442,7 @@ export function LangToggle({ short, className }: { short?: boolean; className?: 
           lang={v === 'fil' ? 'fil' : 'en'}
           aria-pressed={lang === v}
           onClick={() => setLang(v)}
-          className={cx('rounded-full font-semibold transition-colors focus-ring', short ? 'h-[26px] px-2.5 text-caption' : 'h-9 px-4 text-label', lang === v ? 'bg-green text-white' : 'text-ink hover:bg-paper')}
+          className={cx('rounded-full font-semibold transition-colors focus-ring', short ? 'h-8 min-w-[40px] px-2.5 text-caption' : 'h-9 px-4 text-label', lang === v ? 'bg-green text-white' : 'text-ink hover:bg-paper')}
         >
           {l}
         </button>

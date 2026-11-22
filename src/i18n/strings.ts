@@ -84,6 +84,8 @@ export const strings = {
   'verifiedEmployer': ['Verified employer', 'Verified employer'],
   'matches.noResults': ['Walang track sa filter na ito.', 'No tracks for this filter.'], // demo
   'matches.applied': ['Na-apply-an mo na', 'Applied'], // demo
+  'track.notFound': ['Wala na ang track na ito', 'This track isn’t here anymore'], // demo
+  'track.notFoundSub': ['Baka sarado na ito o mali ang link. Tingnan ang ibang track na swak sa’yo.', 'It may have closed, or the link is wrong. See other tracks that fit you.'], // demo
 
   // S06
   'track.details': ['Track details', 'Track details'],

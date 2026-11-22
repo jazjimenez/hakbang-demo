@@ -355,7 +355,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="bg-paper text-ink">
+    <div role="main" className="bg-paper text-ink">
       {/* HERO */}
       <section className="relative bg-deep text-white overflow-hidden">
         <Swoosh className="w-[1300px] -right-[160px] top-[120px] hk-drift" opacity={0.08} />
