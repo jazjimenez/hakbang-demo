@@ -378,7 +378,7 @@ export default function Landing() {
               ))}
             </nav>
             <div className="ml-auto flex items-center gap-2 sm:gap-4">
-              <LangToggle short className="!bg-white/10 !border-white/20 [&_button[aria-pressed=false]]:text-white" />
+              <LangToggle short className="!bg-white/10 !border-white/20 [&_button[aria-pressed=false]]:text-white [&>button]:[--hk-focus:#ffffff]" />
               <Link to="/demo" className="hidden sm:inline text-label text-white/90 hover:text-lime focus-ring rounded">
                 {t('l.nav.login')}
               </Link>
@@ -762,7 +762,7 @@ export default function Landing() {
           </div>
           <div className="mt-12 pt-6 border-t border-white/15 flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.08em] text-white/60">
             <span>{t('l.copyright')}</span>
-            <LangToggle short className="!bg-white/10 !border-white/20 [&_button[aria-pressed=false]]:text-white self-start" />
+            <LangToggle short className="!bg-white/10 !border-white/20 [&_button[aria-pressed=false]]:text-white [&>button]:[--hk-focus:#ffffff] self-start" />
           </div>
         </Container>
         <div className="select-none pointer-events-none font-display font-extrabold text-[25vw] leading-[0.78] tracking-[-0.06em] text-white/[0.06] text-center -mb-[3vw] whitespace-nowrap" aria-hidden>

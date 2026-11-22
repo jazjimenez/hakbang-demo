@@ -17,14 +17,14 @@
     stroke-width: 1.8px;
   }
   :focus-visible {
-    outline: 2px solid #005d41;
+    outline: 2px solid var(--hk-focus);
     outline-offset: 2px;
   }
 }
 
 @layer utilities {
   .focus-ring:focus-visible {
-    outline: 2px solid #005d41;
+    outline: 2px solid var(--hk-focus);
     outline-offset: 2px;
   }
   .animate-fade {
@@ -285,4 +285,21 @@ body::after {
 @keyframes hk-guide {
   0%, 100% { outline-color: #e8912a; }
   50% { outline-color: rgba(232, 145, 42, 0.25); }
+}
+
+/* Focus ring colour follows the surface: green on light, white on the dark
+   green/ink sections (green on #023B2A was 1.6:1, effectively invisible).
+   Kept outside @layer so Tailwind doesn't expand these class selectors into
+   hover/responsive/!important variants. Set on a surface's children (not the
+   surface itself), so an element takes the colour of the nearest surface around
+   it: a white button on the dark hero gets a white ring, while a dark card's own
+   ring still sits on the light page. */
+:root {
+  --hk-focus: #005d41;
+}
+:where(.bg-deep, .bg-ink, .bg-green) > * {
+  --hk-focus: #ffffff;
+}
+:where(.bg-paper, .bg-cream, .bg-white, .bg-mint) > * {
+  --hk-focus: #005d41;
 }

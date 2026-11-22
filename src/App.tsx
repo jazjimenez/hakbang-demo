@@ -84,12 +84,61 @@ function LangAttr() {
   return null;
 }
 
+// Browser-tab / screen-reader title per route. First match wins.
+const TITLES: [RegExp, string][] = [
+  [/^\/$/, 'Hakbang: training na may trabaho sa dulo'],
+  [/^\/demo/, 'Demo hub'],
+  [/^\/(signup|consent|onboarding)/, 'Sign up'],
+  [/^\/matches/, 'Your matches'],
+  [/^\/tracks\/[^/]+\/apply/, 'Apply to a track'],
+  [/^\/tracks\/[^/]+\/skill-gap/, 'Skill gap'],
+  [/^\/tracks\//, 'Track details'],
+  [/^\/my-track/, 'My track'],
+  [/^\/hired/, 'You’re hired'],
+  [/^\/alerts/, 'Alerts'],
+  [/^\/reminders/, 'Reminders'],
+  [/^\/profile/, 'Profile'],
+  [/^\/skill-plan/, 'Skill plan'],
+  [/^\/endorsements/, 'Endorsements'],
+  [/^\/resume-review/, 'Resume review'],
+  [/^\/report/, 'Report a problem'],
+  [/^\/learn/, 'Learn'],
+  [/^\/contact/, 'Contact'],
+  [/^\/legal\/terms/, 'Terms of Use'],
+  [/^\/legal\/privacy/, 'Privacy Notice'],
+  [/^\/legal\/credits/, 'Photo credits'],
+  [/^\/legal/, 'Legal'],
+  [/^\/support/, 'Support'],
+  [/^\/employer\/verify/, 'Verify your company · Employer'],
+  [/^\/employer\/overview/, 'Overview · Employer'],
+  [/^\/employer\/tracks\/new/, 'Post an opening · Employer'],
+  [/^\/employer\/tracks\/[^/]+\/edit/, 'Edit opening · Employer'],
+  [/^\/employer\/tracks/, 'Openings · Employer'],
+  [/^\/employer\/candidates/, 'Candidates · Employer'],
+  [/^\/employer\/trainees/, 'Trainees · Employer'],
+  [/^\/employer\/billing/, 'Hires & billing · Employer'],
+  [/^\/admin\/verification/, 'Verification queue · Admin'],
+  [/^\/admin\/reports/, 'Reports · Admin'],
+  [/^\/admin\/employers/, 'Employers · Admin'],
+  [/^\/admin\/tracks/, 'Tracks · Admin'],
+];
+
+function DocTitle() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const hit = TITLES.find(([re]) => re.test(pathname));
+    document.title = !hit ? 'Hakbang · Demo' : pathname === '/' ? hit[1] : `${hit[1]} · Hakbang`;
+  }, [pathname]);
+  return null;
+}
+
 const launch = (el: JSX.Element) => <LaunchOnly>{el}</LaunchOnly>;
 
 export default function App() {
   return (
     <HashRouter>
       <ScrollTop />
+      <DocTitle />
       <Prefetch />
       <LangAttr />
       <Suspense fallback={<div className="min-h-screen bg-paper" aria-busy="true" />}>
