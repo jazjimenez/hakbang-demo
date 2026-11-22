@@ -48,7 +48,7 @@ function CourseCard({ c }: { c: Course }) {
     <li>
       <Link
         to={`/learn/${c.id}`}
-        className="group flex flex-col h-full bg-cream border-[1.5px] border-ink rounded-[18px] overflow-hidden shadow-brut-sm transition-all duration-150 hover:shadow-brut hover:-translate-y-0.5 focus-ring"
+        className="group flex flex-col h-full bg-cream border-[1.5px] border-ink rounded-[18px] overflow-hidden shadow-brut-sm transition-[transform,box-shadow] duration-150 hover:shadow-brut hover:-translate-y-0.5 focus-ring"
       >
         {/* banner */}
         <div className="relative h-[92px] px-4 pt-3 flex items-start justify-between" style={{ background: c.tile }}>
@@ -135,10 +135,10 @@ export function Learn() {
         </h1>
         <p className="mt-2 text-body-s lg:text-body text-muted max-w-[620px]">{t('learn.sub')}</p>
 
-        <label className="mt-5 flex items-center gap-2.5 h-12 px-4 rounded-[14px] bg-cream border-[1.5px] border-ink focus-within:shadow-brut-sm max-w-[560px]">
+        <label className="mt-5 flex items-center gap-2.5 h-12 px-4 rounded-[14px] bg-cream border-[1.5px] border-ink focus-within:shadow-brut-sm focus-within-ring max-w-[560px]">
           <Search size={18} className="text-muted shrink-0" aria-hidden />
           <span className="sr-only">{t('learn.search')}</span>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('learn.search')} className="flex-1 bg-transparent text-body focus:outline-none placeholder:text-muted" />
+          <input type="search" name="q" autoComplete="off" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('learn.search')} className="flex-1 bg-transparent text-body focus:outline-none placeholder:text-muted" />
         </label>
 
         <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar pb-1">

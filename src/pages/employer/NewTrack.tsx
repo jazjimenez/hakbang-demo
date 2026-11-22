@@ -72,7 +72,7 @@ export function NewTrack() {
   });
 
   const steps = ['Role, job and skills', 'Modules and schedule', 'Hiring terms and publish'];
-  const input = 'mt-1.5 w-full h-12 rounded-input border-[1.5px] border-ink/25 px-3.5 text-body bg-cream focus:outline-none focus:border-ink';
+  const input = 'mt-1.5 w-full h-12 rounded-input border-[1.5px] border-ink/25 px-3.5 text-body bg-cream focus:border-ink';
   const field = (label: string, value: string, set: (v: string) => void, opts?: { span?: boolean; prefix?: string }) => (
     <label className={cx('block', opts?.span && 'sm:col-span-2')}>
       <span className="text-caption text-muted">{label}</span>
@@ -195,7 +195,7 @@ export function NewTrack() {
                               aria-label={`Module ${i + 1} title`}
                               value={m.title}
                               onChange={(e) => setModules(modules.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)))}
-                              className="w-full bg-transparent focus:outline-none focus:bg-paper rounded px-1"
+                              className="w-full bg-transparent focus:bg-paper rounded px-1"
                             />
                           </Td>
                           <Td>{m.format}</Td>

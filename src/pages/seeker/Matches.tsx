@@ -37,10 +37,10 @@ function useLiveTracks(filter: Filter, q = '') {
 function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const t = useT();
   return (
-    <label className="flex items-center gap-2.5 h-11 px-4 rounded-[14px] bg-cream border-[1.5px] border-ink focus-within:shadow-brut-sm">
+    <label className="flex items-center gap-2.5 h-11 px-4 rounded-[14px] bg-cream border-[1.5px] border-ink focus-within:shadow-brut-sm focus-within-ring">
       <Search size={18} className="text-muted shrink-0" aria-hidden />
       <span className="sr-only">{t('matches.search')}</span>
-      <input data-guide="search" value={value} onChange={(e) => onChange(e.target.value)} placeholder={t('matches.search')} className="flex-1 min-w-0 bg-transparent text-body-s focus:outline-none placeholder:text-muted" />
+      <input data-guide="search" type="search" name="q" autoComplete="off" value={value} onChange={(e) => onChange(e.target.value)} placeholder={t('matches.search')} className="flex-1 min-w-0 bg-transparent text-body-s focus:outline-none placeholder:text-muted" />
     </label>
   );
 }
@@ -103,7 +103,7 @@ function TrackCard({ track }: { track: LiveTrack }) {
   const applied = useApplied(track.id);
   return (
     <li>
-      <Link to={`/tracks/${track.id}`} className="block bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 transition-all duration-150 hover:shadow-brut hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:shadow-none focus-ring">
+      <Link to={`/tracks/${track.id}`} className="block bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-4 transition-[transform,box-shadow] duration-150 hover:shadow-brut hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:shadow-none focus-ring">
         <div className="flex gap-3.5">
           <CompanyTile initials={emp.initials} color={emp.tile} size={44} />
           <div className="min-w-0">
@@ -201,7 +201,7 @@ function ListItem({ track, selected }: { track: LiveTrack; selected: boolean }) 
       <Link
         to={`/tracks/${track.id}`}
         aria-current={selected ? 'true' : undefined}
-        className={cx('block rounded-card p-5 border-[1.5px] border-ink transition-all duration-150 focus-ring', selected ? 'bg-mint shadow-brut-lime' : 'bg-cream shadow-brut-sm hover:shadow-brut hover:-translate-y-0.5')}
+        className={cx('block rounded-card p-5 border-[1.5px] border-ink transition-[transform,box-shadow,background-color] duration-150 focus-ring', selected ? 'bg-mint shadow-brut-lime' : 'bg-cream shadow-brut-sm hover:shadow-brut hover:-translate-y-0.5')}
       >
         <div className="flex gap-3.5">
           <CompanyTile initials={emp.initials} color={emp.tile} size={40} />

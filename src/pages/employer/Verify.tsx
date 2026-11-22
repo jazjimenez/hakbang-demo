@@ -48,7 +48,7 @@ export function Verify() {
               ].map(([l, val]) => (
                 <label key={l} className="block">
                   <span className="text-caption text-muted">{l}</span>
-                  <input defaultValue={val} className="mt-1.5 w-full h-12 rounded-input border border-line px-3.5 text-body focus:outline-none focus:border-green" />
+                  <input defaultValue={val} className="mt-1.5 w-full h-12 rounded-input border border-line px-3.5 text-body focus:border-green" />
                 </label>
               ))}
             </div>

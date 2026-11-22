@@ -5,12 +5,26 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+    /* no double-tap zoom delay; tap feedback comes from our own :active states */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     @apply bg-paper text-ink font-sans text-body antialiased;
   }
   h1, h2, h3, .font-display {
     font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  }
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+  p, li, dd {
+    text-wrap: pretty;
+  }
+  /* figures that change or line up (money, %, scores, step numbers) */
+  .text-stat, .font-mono, [role='progressbar'], time {
+    font-variant-numeric: tabular-nums;
   }
   /* lucide icons: stroke width ≈ 1.8 everywhere unless set inline */
   svg.lucide {
@@ -24,6 +38,11 @@
 
 @layer utilities {
   .focus-ring:focus-visible {
+    outline: 2px solid var(--hk-focus);
+    outline-offset: 2px;
+  }
+  /* a field wrapper (icon + bare input) shows the ring around the whole pill */
+  .focus-within-ring:focus-within {
     outline: 2px solid var(--hk-focus);
     outline-offset: 2px;
   }
