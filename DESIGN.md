@@ -127,6 +127,7 @@ Outlines are `1.5px` ink on cards, chips and secondary buttons, and `1px line` o
 
 - Fast and physical: 100ms button press, 150–200ms hovers, 180–260ms enter (`animate-fade`, `animate-pop`, `animate-sheet`).
 - Landing only: scroll reveal (`hk-reveal`, `hk-stagger`), a hero rise, the trail drawing itself, the marquee.
+- Landing pointer effects use [Motion Primitives](https://motion-primitives.com) (vendored in `src/components/motion-primitives`, wrapped on-brand in `Motion.tsx`): `MagneticCta` on lime CTAs, `TiltCard` on the step cards and receipt, `HoverHighlight` on the header nav, `EdgeTrail` (lime) on the match card and CTA band, `WordsIn` on the hero subline, `SpringNumber` in the impact calculator. Pointer effects switch on only for a real mouse. Spotlight and Text Shimmer are left out on purpose: blur glows and gradient text are on the Don'ts list.
 - Animate `transform` and `opacity` only. Never `transition: all`.
 - `prefers-reduced-motion: reduce` turns every animation off and shows the end state.
 
