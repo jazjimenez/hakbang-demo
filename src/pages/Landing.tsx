@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Building2, Globe2, Home as HomeIcon, Calendar, Check, Clock, FileText, Flag, MapPin, Minus, PhilippinePeso, Plus, Route as RouteIcon, ShieldCheck, Sparkles, Star, User } from 'lucide-react';
 import { Logo, NavBrand, Swoosh } from '../components/Brand';
 import { Trail } from '../components/Trail';
-import { CountUp, Reveal } from '../components/Motion';
+import { CountUp, EdgeTrail, HoverHighlight, MagneticCta, Reveal, SpringNumber, TiltCard, WordsIn } from '../components/Motion';
 import { Accent, Avatar, Button, Eyebrow, IconTile, LangToggle, MatchBars, Toast, VerifiedBadge, cx } from '../components/ui';
 import { useT } from '../i18n';
 import { useDemo } from '../store';
@@ -295,7 +295,7 @@ function Impact() {
           <div className="flex flex-col md:flex-row md:items-end gap-5 md:gap-10">
             <label className="flex-1">
               <span className="text-title">{t('x.calcTitle')}</span>
-              <span className="mt-2 block font-display font-extrabold text-[44px] leading-[44px] tracking-[-0.03em] text-green tabular-nums">{grads.toLocaleString('en-PH')}</span>
+              <SpringNumber value={grads} className="mt-2 block font-display font-extrabold text-[44px] leading-[44px] tracking-[-0.03em] text-green" />
               <span className="block text-body-s text-muted">{t('x.calcGrads')}</span>
               <input
                 type="range"
@@ -355,7 +355,7 @@ export default function Landing() {
   };
 
   return (
-    <div role="main" className="bg-paper text-ink">
+    <div role="main" className="bg-paper hk-felt text-ink">
       {/* HERO */}
       <section className="relative bg-deep text-white overflow-hidden">
         <Swoosh className="w-[1300px] -right-[160px] top-[120px] hk-drift" opacity={0.08} />
@@ -363,19 +363,22 @@ export default function Landing() {
           <header className="relative h-[80px] sm:h-[94px] flex items-center gap-3 sm:gap-8">
             <NavBrand to="/" reversed size={26} className="sm:!hidden" />
             <NavBrand to="/" reversed size={34} className="!hidden sm:!inline-flex" />
-            <nav aria-label="Primary" className="hidden lg:flex gap-7 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-white/75">
-              {(
-                [
-                  [t('l.nav.seekers'), 'how'],
-                  [t('l.nav.employers'), 'employers'],
-                  [t('l.nav.how'), 'how'],
-                  ['FAQ', 'faq'],
-                ] as const
-              ).map(([l, id]) => (
-                <button key={l} type="button" onClick={() => scrollTo(id)} className="hover:text-lime focus-ring rounded transition-colors">
-                  {l}
-                </button>
-              ))}
+            <nav aria-label="Primary" className="hidden lg:flex gap-0.5 xl:gap-1 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-white/75">
+              {/* a soft pill slides to whichever link is hovered */}
+              <HoverHighlight enableHover className="rounded-[6px] bg-white/10" transition={{ type: 'spring', bounce: 0.15, duration: 0.3 }}>
+                {(
+                  [
+                    [t('l.nav.seekers'), 'how'],
+                    [t('l.nav.employers'), 'employers'],
+                    [t('l.nav.how'), 'how'],
+                    ['FAQ', 'faq'],
+                  ] as const
+                ).map(([l, id]) => (
+                  <button key={l} data-id={l} type="button" onClick={() => scrollTo(id)} className="px-2.5 xl:px-3 py-2 whitespace-nowrap hover:text-lime focus-ring rounded-[6px] transition-colors">
+                    {l}
+                  </button>
+                ))}
+              </HoverHighlight>
             </nav>
             <div className="ml-auto flex items-center gap-2 sm:gap-4">
               <LangToggle short className="!bg-white/10 !border-white/20 [&_button[aria-pressed=false]]:text-white [&>button]:[--hk-focus:#ffffff]" />
@@ -397,13 +400,13 @@ export default function Landing() {
               <h1 style={d(80)} className="hk-rise mt-7 font-display font-extrabold text-[50px] leading-[48px] sm:text-[68px] sm:leading-[64px] xl:text-[86px] xl:leading-[80px] tracking-[-0.045em] [&_em]:text-lime">
                 <Accent text={t('l.hero')} />
               </h1>
-              <p style={d(180)} className="hk-rise mt-7 text-[17px] leading-[27px] text-white/80 max-w-[500px]">
-                {t('l.heroSub')}
-              </p>
+              <WordsIn text={t('l.heroSub')} delay={0.2} className="mt-7 text-[17px] leading-[27px] text-white/80 max-w-[500px]" />
               <div style={d(280)} className="hk-rise mt-9 flex flex-wrap gap-3.5">
-                <Button variant="lime" onClick={seeker}>
-                  {t('l.find')} <ArrowUpRight size={18} aria-hidden />
-                </Button>
+                <MagneticCta>
+                  <Button variant="lime" onClick={seeker}>
+                    {t('l.find')} <ArrowUpRight size={18} aria-hidden />
+                  </Button>
+                </MagneticCta>
                 <Button variant="onDarkOutline" onClick={() => scrollTo('employers')}>
                   {t('l.forEmp')}
                 </Button>
@@ -456,6 +459,7 @@ export default function Landing() {
             ).map(([h, dsc, Icon], i) => (
               // each card sits one step higher than the last
               <li key={h} className="lg:mb-[var(--lift)]" style={{ '--lift': `${i * 36}px` } as CSSProperties}>
+                <TiltCard className="h-full">
                 <div
                   className={cx(
                     'group h-full rounded-[18px] border-[1.5px] border-ink p-6 transition-transform duration-200 hover:-translate-y-1',
@@ -472,6 +476,7 @@ export default function Landing() {
                   <h3 className="mt-1.5 text-h-s">{t(h)}</h3>
                   <p className={cx('mt-2 text-body-s', i === 3 ? 'text-white/75' : 'text-muted')}>{t(dsc)}</p>
                 </div>
+                </TiltCard>
               </li>
             ))}
           </Reveal>
@@ -546,7 +551,8 @@ export default function Landing() {
                   </span>
                 </div>
               </div>
-              <div className="rounded-[22px] bg-deep text-white border-[1.5px] border-ink shadow-brut-lime p-7">
+              <div className="relative rounded-[22px] bg-deep text-white border-[1.5px] border-ink shadow-brut-lime p-7">
+                <EdgeTrail size={64} duration={8} />
                 <h3 className="text-h-m">{t('l.f.match')}</h3>
                 <p className="mt-1.5 text-body-s text-white/75">{t('l.f.matchD')}</p>
                 <div className="mt-5 rounded-[14px] bg-white/10 p-4 flex items-center gap-4">
@@ -628,9 +634,11 @@ export default function Landing() {
               ))}
             </Reveal>
             <div className="mt-9 flex flex-wrap gap-3.5">
-              <Button variant="lime" onClick={employer}>
-                {t('l.emp.pilot')} <ArrowUpRight size={18} aria-hidden />
-              </Button>
+              <MagneticCta>
+                <Button variant="lime" onClick={employer}>
+                  {t('l.emp.pilot')} <ArrowUpRight size={18} aria-hidden />
+                </Button>
+              </MagneticCta>
               <Button variant="onDarkOutline" onClick={() => nav('/contact?topic=employer')}>
                 {t('l.emp.talk')}
               </Button>
@@ -639,6 +647,7 @@ export default function Landing() {
 
           {/* pricing as a receipt */}
           <Reveal delay={150} className="[filter:drop-shadow(7px_7px_0_#5DB250)]">
+            <TiltCard deg={8}>
             <div className="hk-receipt bg-cream text-ink px-7 pt-7 pb-10 rotate-[1.5deg] hover:rotate-0 transition-transform duration-300">
               <div className="flex items-center justify-between font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
                 <span>{t('x.receipt')}</span>
@@ -665,6 +674,7 @@ export default function Landing() {
               </dl>
               <p className="mt-2 pt-3 border-t-[1.5px] border-ink text-caption text-muted">{t('l.price.note')}</p>
             </div>
+            </TiltCard>
           </Reveal>
         </Container>
       </section>
@@ -719,15 +729,19 @@ export default function Landing() {
                 </g>
               ))}
             </svg>
+            {/* a lime spark runs the band's edge, over the staircase */}
+            <EdgeTrail size={96} duration={9} />
             <div className="relative flex-1">
               <h2 className="font-display font-extrabold text-[38px] leading-[38px] md:text-[60px] md:leading-[58px] tracking-[-0.04em] [&_em]:text-lime">
                 <Accent text={t('l.cta')} />
               </h2>
               <p className="mt-3 text-body text-cream/75">{t('l.ctaSub')}</p>
             </div>
-            <Button variant="lime" className="relative self-start md:self-center md:mr-[220px] xl:mr-[260px]" onClick={seeker}>
-              {t('l.ctaBtn')} <ArrowUpRight size={18} aria-hidden />
-            </Button>
+            <MagneticCta className="relative self-start md:self-center md:mr-[220px] xl:mr-[260px]">
+              <Button variant="lime" onClick={seeker}>
+                {t('l.ctaBtn')} <ArrowUpRight size={18} aria-hidden />
+              </Button>
+            </MagneticCta>
           </Reveal>
         </Container>
       </section>

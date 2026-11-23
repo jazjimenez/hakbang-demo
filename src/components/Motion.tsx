@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState, type CSSProperties, type ElementType, type ReactNode } from 'react';
+import { useReducedMotion } from 'motion/react';
 import { cx } from './ui';
+import { AnimatedBackground } from './motion-primitives/animated-background';
+import { AnimatedNumber } from './motion-primitives/animated-number';
+import { BorderTrail } from './motion-primitives/border-trail';
+import { Magnetic } from './motion-primitives/magnetic';
+import { TextEffect } from './motion-primitives/text-effect';
+import { Tilt } from './motion-primitives/tilt';
 
 const reduced = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -88,3 +95,76 @@ export function CountUp({ to, prefix = '', suffix = '', duration = 1200, decimal
     </span>
   );
 }
+
+/* ---------------- Motion Primitives, on brand ----------------
+ * Thin wrappers around the vendored components in ./motion-primitives.
+ * Each one renders its plain children when the visitor prefers reduced
+ * motion, and the pointer effects only switch on for a real mouse.
+ */
+
+const finePointer = () => typeof window !== 'undefined' && window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
+
+function usePointerFx() {
+  const reduce = useReducedMotion();
+  const [fine, setFine] = useState(false);
+  useEffect(() => setFine(finePointer()), []);
+  return fine && !reduce;
+}
+
+/** Pulls its child gently toward the cursor (primary CTAs only). */
+export function MagneticCta({ children, className }: { children: ReactNode; className?: string }) {
+  const on = usePointerFx();
+  return (
+    <span className={cx('inline-flex', className)}>
+      {on ? (
+        <Magnetic intensity={0.25} range={120} springOptions={{ stiffness: 220, damping: 18, mass: 0.4 }}>
+          {children}
+        </Magnetic>
+      ) : (
+        children
+      )}
+    </span>
+  );
+}
+
+/** Tilts a card a few degrees, the side under the cursor dipping away. */
+export function TiltCard({ children, className, deg = 6 }: { children: ReactNode; className?: string; deg?: number }) {
+  const on = usePointerFx();
+  if (!on) return <div className={className}>{children}</div>;
+  return (
+    <Tilt rotationFactor={deg} springOptions={{ stiffness: 260, damping: 24, mass: 0.5 }} className={className}>
+      {children}
+    </Tilt>
+  );
+}
+
+/** A lime spark that runs around its parent's border. Parent must be `relative`. */
+export function EdgeTrail({ className, size = 72, duration = 7 }: { className?: string; size?: number; duration?: number }) {
+  const reduce = useReducedMotion();
+  if (reduce) return null;
+  return <BorderTrail size={size} className={cx('bg-lime', className)} transition={{ repeat: Infinity, duration, ease: 'linear' }} />;
+}
+
+/** Words slide up one after another. Re-runs when the text changes (e.g. language toggle). */
+export function WordsIn({ text, className, delay = 0, as = 'p' }: { text: string; className?: string; delay?: number; as?: 'p' | 'span' | 'div' }) {
+  const reduce = useReducedMotion();
+  if (reduce) {
+    const As = as;
+    return <As className={className}>{text}</As>;
+  }
+  return (
+    <TextEffect key={text} as={as} per="word" preset="slide" delay={delay} speedReveal={1.4} className={className}>
+      {text}
+    </TextEffect>
+  );
+}
+
+/** A number that springs to each new value. */
+export function SpringNumber({ value, className }: { value: number; className?: string }) {
+  const reduce = useReducedMotion();
+  if (reduce) return <span className={cx('tabular-nums', className)}>{value.toLocaleString('en-PH')}</span>;
+  return <AnimatedNumber value={value} locale="en-PH" springOptions={{ stiffness: 180, damping: 26, mass: 0.6 }} className={className} />;
+}
+
+/** A sliding highlight that follows the hovered item in a row. */
+export { AnimatedBackground as HoverHighlight };
