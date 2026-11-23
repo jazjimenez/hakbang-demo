@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Building2, Globe2, Home as HomeIcon, Calendar, Check, Clock, FileText, Flag, MapPin, Minus, PhilippinePeso, Plus, Route as RouteIcon, ShieldCheck, Sparkles, Star, User } from 'lucide-react';
 import { Logo, NavBrand, Swoosh } from '../components/Brand';
@@ -8,6 +8,7 @@ import { Accent, Avatar, Button, Eyebrow, IconTile, LangToggle, MatchBars, Toast
 import { useT } from '../i18n';
 import { useDemo } from '../store';
 import { LFS, PLAN } from '../data/facts';
+import { mountLiquidGlass } from '../lib/liquidGlass';
 
 const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 const d = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties;
@@ -119,6 +120,7 @@ function Staircase() {
 function StepCard({ step, left, width, delay, lime, children }: { step: number; left: number; width: number; delay: number; lime?: boolean; children: ReactNode }) {
   return (
     <div
+      data-glass={lime ? 'lime' : 'cream'}
       className={cx('absolute rounded-[12px] border-[1.5px] border-ink shadow-brut-sm px-3.5 py-3 text-ink hk-drop flex items-center gap-2.5', lime ? 'bg-lime' : 'bg-cream')}
       style={{ left, width, bottom: STEP_H[step] - 1, '--d': `${delay}ms` } as CSSProperties}
     >
@@ -345,6 +347,24 @@ export default function Landing() {
   const nav = useNavigate();
   const setRole = useDemo((s) => s.setRole);
   const [toast, setToast] = useState<string | null>(null);
+
+  // WebGL liquid glass over the green sections. Wait for fonts and the hero's
+  // entrance animations, so the backdrop snapshot shows the settled layout.
+  useEffect(() => {
+    let stop = () => {};
+    let alive = true;
+    const t = window.setTimeout(() => {
+      void document.fonts.ready.then(() => {
+        if (alive) stop = mountLiquidGlass();
+      });
+    }, 2600);
+    return () => {
+      alive = false;
+      clearTimeout(t);
+      stop();
+    };
+  }, []);
+
   const seeker = () => {
     setRole('seeker');
     nav('/signup');
@@ -355,9 +375,9 @@ export default function Landing() {
   };
 
   return (
-    <div role="main" className="bg-paper hk-felt text-ink">
+    <div role="main" className="bg-paper text-ink">
       {/* HERO */}
-      <section className="relative bg-deep text-white overflow-hidden">
+      <section data-glass-backdrop className="relative bg-deep text-white overflow-hidden">
         <Swoosh className="w-[1300px] -right-[160px] top-[120px] hk-drift" opacity={0.08} />
         <Container>
           <header className="relative h-[80px] sm:h-[94px] flex items-center gap-3 sm:gap-8">
@@ -385,7 +405,7 @@ export default function Landing() {
               <Link to="/demo" className="hidden sm:inline text-label text-white/90 hover:text-lime focus-ring rounded">
                 {t('l.nav.login')}
               </Link>
-              <Button variant="lime" size="md" onClick={seeker} className="!px-3.5 sm:!px-5 !h-10 sm:!h-11">
+              <Button variant="lime" glass="lime" size="md" onClick={seeker} className="!px-3.5 sm:!px-5 !h-10 sm:!h-11">
                 {t('l.nav.signup')}
               </Button>
             </div>
@@ -403,11 +423,11 @@ export default function Landing() {
               <WordsIn text={t('l.heroSub')} delay={0.2} className="mt-7 text-[17px] leading-[27px] text-white/80 max-w-[500px]" />
               <div style={d(280)} className="hk-rise mt-9 flex flex-wrap gap-3.5">
                 <MagneticCta>
-                  <Button variant="lime" onClick={seeker}>
+                  <Button variant="lime" glass="lime" onClick={seeker}>
                     {t('l.find')} <ArrowUpRight size={18} aria-hidden />
                   </Button>
                 </MagneticCta>
-                <Button variant="onDarkOutline" onClick={() => scrollTo('employers')}>
+                <Button variant="onDarkOutline" glass="clear" onClick={() => scrollTo('employers')}>
                   {t('l.forEmp')}
                 </Button>
               </div>
@@ -613,7 +633,7 @@ export default function Landing() {
       <Impact />
 
       {/* EMPLOYERS */}
-      <section id="employers" className="bg-deep text-white py-20 lg:py-28 relative overflow-hidden scroll-mt-4">
+      <section id="employers" data-glass-backdrop className="bg-deep text-white py-20 lg:py-28 relative overflow-hidden scroll-mt-4">
         <Container className="grid lg:grid-cols-[1fr_420px] gap-14 lg:gap-20 items-center relative">
           <Reveal>
             <Eyebrow n="06" dark>
@@ -635,11 +655,11 @@ export default function Landing() {
             </Reveal>
             <div className="mt-9 flex flex-wrap gap-3.5">
               <MagneticCta>
-                <Button variant="lime" onClick={employer}>
+                <Button variant="lime" glass="lime" onClick={employer}>
                   {t('l.emp.pilot')} <ArrowUpRight size={18} aria-hidden />
                 </Button>
               </MagneticCta>
-              <Button variant="onDarkOutline" onClick={() => nav('/contact?topic=employer')}>
+              <Button variant="onDarkOutline" glass="clear" onClick={() => nav('/contact?topic=employer')}>
                 {t('l.emp.talk')}
               </Button>
             </div>
@@ -738,7 +758,7 @@ export default function Landing() {
               <p className="mt-3 text-body text-cream/75">{t('l.ctaSub')}</p>
             </div>
             <MagneticCta className="relative self-start md:self-center md:mr-[220px] xl:mr-[260px]">
-              <Button variant="lime" onClick={seeker}>
+              <Button variant="lime" glass="lime" onClick={seeker}>
                 {t('l.ctaBtn')} <ArrowUpRight size={18} aria-hidden />
               </Button>
             </MagneticCta>
@@ -747,7 +767,7 @@ export default function Landing() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-deep text-white overflow-hidden">
+      <footer data-glass-backdrop className="bg-deep text-white overflow-hidden">
         <Container className="pt-16 pb-6">
           <div className="grid gap-10 md:grid-cols-[320px_1fr]">
             <div>

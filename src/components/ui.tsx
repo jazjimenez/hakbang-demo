@@ -11,7 +11,7 @@ export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Bool
 type Variant = 'primary' | 'secondary' | 'onDark' | 'onDarkOutline' | 'danger' | 'lime' | 'ghost';
 type Size = 'lg' | 'md' | 'sm';
 
-// Buttons sit on a ledge (hard offset shadow) and physically step down when pressed.
+// Buttons are glass (soft shadow, inner highlight) and still step down when pressed.
 const press = 'enabled:active:translate-y-[3px] enabled:active:shadow-none transition-[transform,box-shadow,background-color] duration-100';
 const variants: Record<Variant, string> = {
   primary: `bg-green text-white shadow-step hover:bg-[#006b4b] disabled:bg-line disabled:text-muted disabled:shadow-none ${press}`,
@@ -19,7 +19,7 @@ const variants: Record<Variant, string> = {
   onDark: `bg-cream text-green shadow-step-lime hover:bg-white ${press}`,
   onDarkOutline: `bg-transparent text-white border-[1.5px] border-white/70 hover:bg-white/10 hover:border-white ${press}`,
   danger: `bg-red-tint text-red border-[1.5px] border-red/40 ${press}`,
-  lime: `bg-lime text-deep shadow-[0_4px_0_0_#15201A] hover:bg-[#6cc35f] ${press}`,
+  lime: `bg-lime text-deep shadow-glass hover:bg-[#6cc35f] ${press}`,
   ghost: 'text-green hover:bg-mint',
 };
 const sizes: Record<Size, string> = {
@@ -34,9 +34,11 @@ interface BtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   to?: string;
   block?: boolean;
   icon?: ComponentType<LucideProps>;
+  /** over a [data-glass-backdrop] section: render as WebGL liquid glass with this tint */
+  glass?: 'cream' | 'lime' | 'clear';
 }
 
-export function Button({ variant = 'primary', size = 'lg', to, block, icon: Icon, className, children, ...rest }: BtnProps) {
+export function Button({ variant = 'primary', size = 'lg', to, block, icon: Icon, glass, className, children, ...rest }: BtnProps) {
   const cls = cx(
     'inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-ring disabled:cursor-not-allowed',
     variants[variant],
@@ -52,12 +54,12 @@ export function Button({ variant = 'primary', size = 'lg', to, block, icon: Icon
   );
   if (to)
     return (
-      <Link to={to} className={cls}>
+      <Link to={to} className={cls} data-glass={glass}>
         {inner}
       </Link>
     );
   return (
-    <button type="button" className={cls} {...rest}>
+    <button type="button" className={cls} data-glass={glass} {...rest}>
       {inner}
     </button>
   );

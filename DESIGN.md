@@ -1,6 +1,6 @@
 # Hakbang design system
 
-**Hakbang** means "step". The site should feel like climbing a staircase toward a first real job: grounded, honest and warm, never corporate-glossy. Everything sits on a ledge: hard offset shadows with no blur, ink outlines, and buttons that physically step down when pressed. The same idea shows up as the numbered **trail** (01 → 04) that runs through the landing page and the app.
+**Hakbang** means "step". The site should feel like climbing a staircase toward a first real job: grounded, honest and warm, never corporate-glossy. Cards and buttons are liquid glass: translucent, with a top sheen, a faint light rim and a soft shadow; buttons still step down when pressed. The same idea shows up as the numbered **trail** (01 → 04) that runs through the landing page and the app.
 
 Audience: Filipino fresh grads on phones (FIL/EN Taglish copy), plus employer HR staff and career offices on desktop. Light theme only.
 
@@ -18,7 +18,7 @@ Three greens carry the brand. Everything else is warm paper neutrals.
 | `green` | `#005D41` | Primary: primary buttons, links, selected states, focus ring on light surfaces. |
 | `lime` | `#5DB250` | Accent: progress fill, "now" step, highlights on `deep`, the lime button. Text on `deep` only at ≥ 4.5:1 (4.78). Never as text on light surfaces. |
 | `mint` | `#E8F3EA` | Quiet green tint: verified badge, icon tiles, ghost-button hover, AI tag. |
-| `ink` | `#15201A` | Body text, outlines on cards and secondary buttons, brut shadows, demo banner. |
+| `ink` | `#15201A` | Body text, outlines on cards and secondary buttons, demo banner. |
 | `muted` | `#5E6B64` | Secondary text, captions, field labels. 4.86:1 on paper. Minimum for any text. |
 | `line` | `#DCD5C3` | Hairline borders, input borders, empty progress tracks, disabled buttons. |
 | `paper` | `#F3EFE5` | Page background (body). |
@@ -85,18 +85,21 @@ Rules:
 | `rounded-sheet` | 28px | Bottom sheet top corners |
 | `rounded-full` | — | Pills, chips, avatars, toggles |
 
-Shadows are hard and offset, with no blur (the "ledge"):
+**Liquid glass.** The shadow tokens keep their old names but are now glass: an inset top highlight, a faint inset light rim and a soft drop shadow (`tailwind.config.js`). Any element with one of them also gets a translucent fill, a top sheen and `backdrop-filter: blur(16px) saturate(1.6)`, and its ink outline fades to a rim (`ink/14`). The rules live under "Liquid glass" in `src/index.css`, at one-class specificity so `hover:bg-*` still wins. With `prefers-reduced-transparency` the fills go solid and the blur is dropped.
 
 | Token | Use |
 |---|---|
-| `shadow-step` (0 4px deep) | Primary button |
-| `shadow-step-ink` (0 3px ink) | Secondary button |
+| `shadow-step` | Primary button (opaque green: white text needs it) |
+| `shadow-step-ink` | Secondary button |
 | `shadow-step-lime` | Buttons on `deep` |
-| `shadow-brut-sm` → `shadow-brut` (3px → 5px ink) | Cards at rest → hover lift |
-| `shadow-brut-lime` | Cards on `deep` |
+| `shadow-glass` | Lime button |
+| `shadow-brut-sm` → `shadow-brut` | Cards at rest → hover lift |
+| `shadow-brut-lime` | Cards on `deep` and dark cards (lime glow) |
 | `shadow-float` (soft) | Only for things that float above the page: modals, demo controls, toasts |
 
-Outlines are `1.5px` ink on cards, chips and secondary buttons, and `1px line` on inputs and quiet dividers.
+**WebGL glass over green.** On the landing page, elements marked `data-glass="cream" | "lime" | "clear"` inside a `[data-glass-backdrop]` section (hero, employers band, footer) get real refraction from `src/lib/liquidGlass.ts`, ported from [dashersw/liquid-glass-js](https://github.com/dashersw/liquid-glass-js) (MIT). It snapshots the section once with html2canvas, after fonts and the hero entrance (2.6s). Each live element needs its own WebGL context, so at most 12 are live at once, on screen first; the rest keep the CSS glass. The tint is near solid in the text area and fades to see-through only at the rim; measured worst cases are muted 4.87:1 on cream, deep 4.68:1 on lime and white 9.2:1 on clear. `<Button glass="lime">` sets the attribute.
+
+Outlines are `1.5px` ink on chips and inner tiles, a faint rim on glass cards and buttons, and `1px line` on inputs and quiet dividers.
 
 ## Components
 
@@ -113,7 +116,7 @@ Outlines are `1.5px` ink on cards, chips and secondary buttons, and `1px line` o
 
 **Inputs** (`<Field>`): 50px tall, white, `line` border, green border when focused plus the focus outline. The label sits above the field in `body-s muted`. Use real `type`, `name` and `autoComplete`. Placeholders are examples ending in `…`.
 
-**Cards** (`<Card>`): cream, 1.5px ink outline, `rounded-card`, `shadow-brut-sm`. Interactive cards lift on hover (translate −2px, `shadow-brut`) and transition only `transform` and `box-shadow`.
+**Cards** (`<Card>`): cream glass, `rounded-card`, `shadow-brut-sm` (see Liquid glass). Interactive cards lift on hover (translate −2px, `shadow-brut`) and transition only `transform` and `box-shadow`.
 
 **Pills and tags**: `StatusPill` (24px, tones green / mint / mango / grey / red); `VerifiedBadge` (mint, shield icon); `LaunchTag` (mono, mango, sticker tilt); `AiTag`. `Chip` is a 36px filter: selected chips are ink-filled.
 
@@ -141,7 +144,7 @@ Outlines are `1.5px` ink on cards, chips and secondary buttons, and `1px line` o
 
 ## Don'ts
 
-- No purple/blue gradients, glassmorphism, gradient text or blurred drop shadows on cards.
+- No purple/blue gradients or gradient text. Glass stays in the brand colours (cream, lime, deep) and never lowers text contrast below 4.5:1.
 - No three identical centered feature cards. Vary the layout: the trail, numbered steps, split rows.
 - No new colours. If a state needs one, use mango (warning) or red (error).
 - No text below `muted` contrast, and no lime text on light surfaces.

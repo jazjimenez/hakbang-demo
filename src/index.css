@@ -213,16 +213,84 @@
 
 /* ================= Bold experiment: "every step counts" ================= */
 
-/* film grain over everything — kills the flat, generated look */
-body::after {
-  content: '';
-  position: fixed;
+/* ================= Liquid glass ================= */
+/* Every card and button that used the old hard "ledge" shadows is now glass:
+   a translucent fill with a top sheen, backdrop blur, a faint rim instead of
+   the ink outline, and the soft shadow from the token (tailwind.config.js).
+   Over the green sections, src/lib/liquidGlass.ts upgrades marked elements
+   ([data-glass]) to real WebGL refraction, ported from dashersw/liquid-glass-js.
+   :where() keeps these at one-class specificity, so hover:bg-* still wins. */
+:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-step-ink, .shadow-step-lime, .shadow-glass) {
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(16px) saturate(1.6);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0) 55%);
+}
+.bg-cream:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-step-ink, .shadow-step-lime) {
+  background-color: rgb(251 248 241 / 0.68);
+}
+.bg-white:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-step-ink) {
+  background-color: rgb(255 255 255 / 0.72);
+}
+.bg-mint:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime) {
+  background-color: rgb(232 243 234 / 0.72);
+}
+.bg-lime:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-glass) {
+  background-color: rgb(93 178 80 / 0.9);
+}
+.bg-deep:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime) {
+  background-color: rgb(2 59 42 / 0.92);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0) 50%);
+}
+.bg-ink:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime) {
+  background-color: rgb(21 32 26 / 0.92);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0) 50%);
+}
+/* the ink outline becomes a faint rim */
+.border-ink:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-step-ink) {
+  border-color: rgb(21 32 26 / 0.14);
+}
+/* over the dark sections the CSS fallback stays near-opaque, so ink text on it
+   keeps its contrast until (or unless) the WebGL glass takes over */
+:where(.bg-deep, .bg-ink) .bg-cream:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-step-ink, .shadow-step-lime) {
+  background-color: rgb(251 248 241 / 0.92);
+}
+/* on-dark outline buttons: clear glass */
+:where(.bg-deep, .bg-ink) .border-white\/70 {
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.03));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 8px 20px -8px rgb(0 0 0 / 0.5);
+}
+/* live WebGL glass: the canvas paints the fill, so the CSS fill steps aside */
+[data-glass-live] {
+  background-color: transparent !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  isolation: isolate;
+}
+[data-glass-live]:not(.absolute):not(.fixed) {
+  position: relative;
+}
+.hk-glass-canvas {
+  position: absolute;
   inset: 0;
+  /* a canvas keeps its pixel size under inset: 0; stretch it to the box, which
+     matters when an ancestor is scaled (the phone hero stairs are at 62 %) */
+  width: 100%;
+  height: 100%;
+  z-index: -1;
   pointer-events: none;
-  z-index: 100;
-  opacity: 0.07;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border-radius: inherit;
+}
+@media (prefers-reduced-transparency: reduce) {
+  :where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-step-ink, .shadow-step-lime, .shadow-glass) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .bg-cream:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-step-ink, .shadow-step-lime) { background-color: #fbf8f1; }
+  .bg-white:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime, .shadow-step-ink) { background-color: #fff; }
+  .bg-mint:where(.shadow-brut, .shadow-brut-sm, .shadow-brut-lime) { background-color: #e8f3ea; }
 }
 
 /* serif italic accent words inside display headings: *like this* */

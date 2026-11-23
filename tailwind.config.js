@@ -41,13 +41,16 @@ export default {
       borderRadius: { btn: '14px', input: '12px', card: '20px', panel: '24px', sheet: '28px' },
       boxShadow: {
         float: '0 8px 24px rgba(3,38,25,.12), 0 1px 3px rgba(3,38,25,.06)',
-        // "step" shadows: hard, offset, no blur — things sit on a ledge and press down
-        step: '0 4px 0 0 #023B2A',
-        'step-ink': '0 3px 0 0 #15201A',
-        'step-lime': '0 4px 0 0 #5DB250',
-        brut: '5px 5px 0 0 #15201A',
-        'brut-sm': '3px 3px 0 0 #15201A',
-        'brut-lime': '6px 6px 0 0 #5DB250',
+        // liquid glass: soft drop shadow plus an inner top highlight and a faint
+        // light rim, so cards and buttons read as glass (see .hk-glass rules and
+        // src/lib/liquidGlass.ts). The names are kept from the old hard "step" shadows.
+        step: 'inset 0 1px 0 rgba(255,255,255,.32), inset 0 -3px 8px rgba(0,0,0,.18), 0 8px 18px -6px rgba(2,59,42,.55)',
+        'step-ink': 'inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px rgba(255,255,255,.4), 0 6px 16px -6px rgba(21,32,26,.28)',
+        'step-lime': 'inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px rgba(255,255,255,.4), 0 8px 22px -6px rgba(93,178,80,.6)',
+        brut: 'inset 0 1px 0 rgba(255,255,255,.85), inset 0 0 0 1px rgba(255,255,255,.35), 0 14px 34px -10px rgba(2,59,42,.28), 0 2px 6px rgba(2,59,42,.08)',
+        'brut-sm': 'inset 0 1px 0 rgba(255,255,255,.85), inset 0 0 0 1px rgba(255,255,255,.35), 0 10px 24px -8px rgba(2,59,42,.26), 0 1px 4px rgba(2,59,42,.08)',
+        'brut-lime': 'inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 0 1px rgba(255,255,255,.12), 0 16px 38px -10px rgba(93,178,80,.55), 0 2px 6px rgba(2,59,42,.12)',
+        glass: 'inset 0 1px 0 rgba(255,255,255,.55), inset 0 -3px 8px rgba(2,59,42,.12), 0 8px 18px -6px rgba(2,59,42,.45)',
       },
     },
   },
