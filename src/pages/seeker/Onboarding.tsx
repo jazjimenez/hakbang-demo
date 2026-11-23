@@ -26,11 +26,44 @@ function Promises({ className }: { className?: string }) {
   );
 }
 
+function GoogleLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} aria-hidden>
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+    </svg>
+  );
+}
+
+function AppleLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+      <path d="M16.37 12.6c-.02-2.33 1.9-3.45 1.99-3.5-1.08-1.59-2.77-1.8-3.37-1.83-1.43-.15-2.8.84-3.53.84-.73 0-1.85-.82-3.04-.8-1.56.02-3 .91-3.8 2.31-1.63 2.82-.42 6.98 1.16 9.27.78 1.12 1.7 2.37 2.9 2.33 1.17-.05 1.61-.75 3.02-.75 1.41 0 1.81.75 3.04.73 1.26-.02 2.05-1.13 2.81-2.26.89-1.3 1.25-2.56 1.27-2.62-.03-.01-2.43-.93-2.45-3.72zM14.05 5.75c.64-.78 1.08-1.85.96-2.93-.93.04-2.06.62-2.72 1.39-.6.69-1.12 1.79-.98 2.85 1.04.08 2.1-.53 2.74-1.31z" />
+    </svg>
+  );
+}
+
+function FacebookLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden>
+      <circle cx="12" cy="12" r="12" fill="#1877F2" />
+      <path fill="#fff" d="M15.12 15.47l.53-3.47h-3.33V9.75c0-.95.47-1.88 1.95-1.88h1.51V4.92s-1.37-.23-2.69-.23c-2.74 0-4.53 1.66-4.53 4.67V12H5.5v3.47h3.06V24a12.2 12.2 0 003.76 0v-8.53h2.8z" />
+    </svg>
+  );
+}
+
+const PROVIDERS = [
+  { name: 'Google', Logo: GoogleLogo },
+  { name: 'Apple', Logo: AppleLogo },
+  { name: 'Facebook', Logo: FacebookLogo },
+] as const;
+
 function ProviderButtons({ onPick, dark }: { onPick: () => void; dark?: boolean }) {
-  // TODO(team): neutral placeholders — swap for official provider assets per each brand's guidelines.
   return (
     <div className="grid grid-cols-3 gap-3">
-      {['Google', 'Apple', 'Facebook'].map((p) => (
+      {PROVIDERS.map(({ name: p, Logo: ProviderLogo }) => (
         <button
           key={p}
           type="button"
@@ -40,7 +73,7 @@ function ProviderButtons({ onPick, dark }: { onPick: () => void; dark?: boolean 
             dark ? 'h-[74px] flex-col bg-white/10 border-white/40 text-white hover:bg-white/15' : 'h-[46px] bg-white border-line text-ink hover:bg-paper text-label',
           )}
         >
-          <span className={cx('rounded-[5px] border border-dashed', dark ? 'w-6 h-6 border-white/60' : 'w-4 h-4 border-muted/60')} aria-hidden />
+          <ProviderLogo className={cx('shrink-0', dark ? 'w-6 h-6' : 'w-[18px] h-[18px]')} />
           {p}
         </button>
       ))}
