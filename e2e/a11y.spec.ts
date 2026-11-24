@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 /** Automated WCAG 2.1 A/AA scan of the main screens. Fails on serious or critical issues. */
-const pages = ['/', '/demo', '/signup', '/consent', '/matches', '/tracks/back-office', '/my-track', '/profile', '/employer/overview', '/employer/candidates', '/employer/billing', '/admin/verification', '/learn', '/learn/excel-basics', '/learn/excel-basics/excel-l6', '/employer/tracks', '/employer/tracks/new', '/contact', '/support', '/legal/credits'];
+const pages = ['/', '/demo', '/signup', '/consent', '/matches', '/tracks/back-office', '/my-track', '/profile', '/employer/overview', '/employer/candidates', '/employer/billing', '/admin/verification', '/learn', '/learn/excel-basics', '/learn/excel-basics/excel-l6', '/employer/tracks', '/employer/tracks/new', '/contact', '/support', '/legal/credits', '/about/team', '/about/built'];
 
 for (const route of pages) {
   test(`a11y: ${route}`, async ({ page }) => {

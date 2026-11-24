@@ -774,7 +774,7 @@ export default function Landing() {
               <Logo reversed height={34} />
               <p className="mt-3 font-serif italic text-[20px] text-white/80">{t('l.tagline')}</p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
               <FooterCol title={t('l.ft.seekers')} items={[[t('l.nav.how'), () => scrollTo('how')], [t('l.ft.tracks'), () => nav('/matches')], [t('l.nav.signup'), seeker], [t('l.nav.login'), () => nav('/demo')]]} />
               <FooterCol
                 title={t('l.ft.employers')}
@@ -792,6 +792,7 @@ export default function Landing() {
               />
               <FooterCol title={t('l.ft.partners')} items={[[t('l.ft.career'), () => nav('/contact?topic=school')], [t('l.ft.peso'), () => nav('/contact?topic=school')]]} />
               <FooterCol title={t('l.ft.help')} items={[['FAQ', () => scrollTo('faq')], [t('l.ft.report'), () => nav('/report')], [t('l.ft.privacy'), () => nav('/legal/privacy')], [t('l.ft.terms'), () => nav('/legal/terms')], ['Photo credits', () => nav('/legal/credits')]]} />
+              <FooterCol title={t('l.ft.about')} items={[[t('l.ft.team'), () => nav('/about/team')], [t('l.ft.built'), () => nav('/about/built')]]} />
             </div>
           </div>
           <div className="mt-12 pt-6 border-t border-white/15 flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.08em] text-white/60">

@@ -45,6 +45,8 @@ const LessonView = l(seekerLearn, 'LessonView');
 const Contact = l(site, 'Contact');
 const Legal = l(site, 'Legal');
 const Support = l(site, 'Support');
+const Team = l(site, 'Team');
+const Built = l(site, 'Built');
 const EmployerTracks = l(emp, 'Tracks');
 const Verify = l(emp, 'Verify');
 const Overview = l(emp, 'Overview');
@@ -108,6 +110,8 @@ const TITLES: [RegExp, string][] = [
   [/^\/legal\/privacy/, 'Privacy Notice'],
   [/^\/legal\/credits/, 'Photo credits'],
   [/^\/legal/, 'Legal'],
+  [/^\/about\/team/, 'The team'],
+  [/^\/about\/built/, 'How this site was built'],
   [/^\/support/, 'Support'],
   [/^\/employer\/verify/, 'Verify your company · Employer'],
   [/^\/employer\/overview/, 'Overview · Employer'],
@@ -148,6 +152,8 @@ export default function App() {
             <Route path="demo" element={<DemoHub />} />
             <Route path="contact" element={<Contact />} />
             <Route path="legal/:doc" element={<Legal />} />
+            <Route path="about/team" element={<Team />} />
+            <Route path="about/built" element={<Built />} />
 
             <Route element={<SeekerBare />}>
               <Route path="signup" element={<Signup />} />

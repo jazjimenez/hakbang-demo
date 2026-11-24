@@ -2,11 +2,12 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Building2, Check, GraduationCap, Send, User } from 'lucide-react';
 import { NavBrand } from '../components/Brand';
-import { Accent, Button, Field, TopBar, cx } from '../components/ui';
+import { Accent, Avatar, Button, Field, TopBar, cx } from '../components/ui';
 import { CREDITS } from '../data/credits';
+import { SCHOOL, TEAM } from '../data/team';
 import { useT } from '../i18n';
 
-function SiteShell({ children }: { children: React.ReactNode }) {
+function SiteShell({ children, wide }: { children: React.ReactNode; wide?: boolean }) {
   const nav = useNavigate();
   return (
     <div className="min-h-[calc(100vh-28px)] bg-paper">
@@ -18,7 +19,7 @@ function SiteShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
       </header>
-      <main className="max-w-[720px] mx-auto px-5 py-12">{children}</main>
+      <main className={cx('mx-auto px-5 py-12', wide ? 'max-w-[1100px]' : 'max-w-[720px]')}>{children}</main>
     </div>
   );
 }
@@ -247,6 +248,144 @@ function Credits() {
         <Link to="/contact" className="text-green underline focus-ring rounded">
           Contact us about an image →
         </Link>
+      </p>
+    </SiteShell>
+  );
+}
+
+/* ---------------- The team (key management personnel) ---------------- */
+
+export function Team() {
+  const t = useT();
+  return (
+    <SiteShell wide>
+      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Team Unlad · CCINOV8</p>
+      <h1 className="mt-2 font-display font-extrabold text-[40px] leading-[42px] tracking-[-0.035em] [&_em]:text-green">
+        <Accent text={t('team.title')} />
+      </h1>
+      <p className="mt-3 max-w-[620px] text-body text-muted">
+        {t('team.sub')} All five are {SCHOOL}.
+      </p>
+      <ul className="mt-10 grid gap-5 md:grid-cols-2">
+        {TEAM.map((m, i) => (
+          <li key={m.name} className={cx('bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm p-6 flex flex-col', i === 0 && 'md:col-span-2')}>
+            <div className="flex items-center gap-4">
+              <Avatar initials={m.initials} size={56} dark={i === 0} />
+              <div className="min-w-0">
+                <h2 className="text-h-m">{m.name}</h2>
+                <p className="text-body-s text-muted">
+                  {m.role} <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-green">· {m.short}</span>
+                </p>
+              </div>
+            </div>
+            <p className="mt-4 mb-5 text-body">{m.bio}</p>
+            <dl className="mt-auto pt-4 border-t border-ink/10 text-body-s">
+              <div>
+                <dt className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Main duties</dt>
+                <dd className="mt-1">{m.duties}</dd>
+              </div>
+            </dl>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-8 text-body-s">
+        <Link to="/contact" className="text-green underline focus-ring rounded">
+          {t('team.contact')} →
+        </Link>
+      </p>
+    </SiteShell>
+  );
+}
+
+/* ---------------- How this site was built ---------------- */
+
+const BUILT: [string, string, [string, string][]][] = [
+  [
+    'Stack',
+    'A frontend-only React app. There is no backend: every account, track and hire lives in your browser.',
+    [
+      ['Vite + React 18 + TypeScript', 'Fast builds and type-checked components.'],
+      ['React Router (hash routes)', 'Every screen keeps its own link and survives a refresh on GitHub Pages.'],
+      ['Zustand', 'Demo state, saved to localStorage so what Paolo does shows up for Carla and the admin.'],
+      ['Tailwind CSS', 'Colours, type, spacing and shadows are design tokens in tailwind.config.js.'],
+      ['lucide-react', 'One icon set, one stroke width.'],
+    ],
+  ],
+  [
+    'Design',
+    'Designed in Figma first, then written down as a design system (DESIGN.md) that every screen follows.',
+    [
+      ['The trail', 'The numbered 01 → 04 steps run through the landing page and the app: Hakbang means “step”.'],
+      ['Type', 'Bricolage Grotesque for headings, Figtree for text, Instrument Serif for accent words, IBM Plex Mono for labels.'],
+      ['Colour', 'Three greens (deep, green, lime) on warm paper, with every text pairing checked against WCAG contrast.'],
+      ['Two languages', 'Filipino and English copy sit side by side as pairs, so the FIL/EN switch changes every screen at once.'],
+    ],
+  ],
+  [
+    'Motion and glass',
+    'Movement and depth are there to guide the eye, and they switch off for people who ask for less.',
+    [
+      ['Motion Primitives', 'Magnetic buttons, tilting cards and counting numbers on the landing page, built on the motion library.'],
+      ['Liquid glass', 'Cards and buttons are frosted glass. Over the green sections they refract what is behind them with a WebGL shader ported from dashersw/liquid-glass-js.'],
+      ['Reduced motion and transparency', 'With those system settings on, animations stop and glass turns solid.'],
+    ],
+  ],
+  [
+    'Quality checks',
+    'Every change to main is tested before it is published.',
+    [
+      ['Playwright', 'End-to-end tests walk the 5-minute story, the MVP check and the phone layouts.'],
+      ['axe', 'An automated WCAG 2.1 AA scan of the main screens fails the build on serious issues.'],
+      ['Keyboard and contrast', 'A skip link, visible focus rings on every surface, and text that keeps at least 4.5:1 contrast, glass included.'],
+    ],
+  ],
+  [
+    'Hosting',
+    'GitHub Actions builds the site on every push to main and publishes it to GitHub Pages.',
+    [
+      ['No tracking', 'No analytics. The only outside requests are Google Fonts and one placeholder photo, listed under Photo credits.'],
+      ['Fictional data', 'People, companies and numbers inside the app are made up for the demo.'],
+    ],
+  ],
+];
+
+export function Built() {
+  const t = useT();
+  return (
+    <SiteShell>
+      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Colophon</p>
+      <h1 className="mt-2 font-display font-extrabold text-[40px] leading-[42px] tracking-[-0.035em] [&_em]:text-green">
+        <Accent text={t('built.title')} />
+      </h1>
+      <p className="mt-3 text-body text-muted">{t('built.sub')}</p>
+      <div className="mt-10 space-y-10">
+        {BUILT.map(([h, lead, items], i) => (
+          <section key={h} aria-labelledby={`built-${i}`}>
+            <h2 id={`built-${i}`} className="text-h-l flex items-baseline gap-3">
+              <span className="font-mono text-[13px] font-semibold text-green">0{i + 1}</span> {h}
+            </h2>
+            <p className="mt-2 text-body text-muted">{lead}</p>
+            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+              {items.map(([name, what]) => (
+                <li key={name} className="bg-cream border-[1.5px] border-ink rounded-[16px] shadow-brut-sm p-4">
+                  <div className="text-title">{name}</div>
+                  <p className="mt-1 text-body-s text-muted">{what}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+      <p className="mt-10 text-body-s flex flex-wrap gap-x-5 gap-y-2">
+        <Link to="/about/team" className="text-green underline focus-ring rounded">
+          {t('l.ft.team')} →
+        </Link>
+        <a href="https://github.com/dashersw/liquid-glass-js" target="_blank" rel="noreferrer" className="text-green underline focus-ring rounded">
+          dashersw/liquid-glass-js (MIT) ↗
+        </a>
+        <a href="https://motion-primitives.com" target="_blank" rel="noreferrer" className="text-green underline focus-ring rounded">
+          Motion Primitives ↗
+        </a>
       </p>
     </SiteShell>
   );
