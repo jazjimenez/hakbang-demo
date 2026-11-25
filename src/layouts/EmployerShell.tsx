@@ -4,6 +4,7 @@ import { NavBrand } from '../components/Brand';
 import { cx } from '../components/ui';
 import { useEmployer } from '../store';
 import { BLUEHARBOR_ID } from '../data/seed';
+import { EmployerNotifications } from './EmployerNotifications';
 
 interface Item {
   to: string;
@@ -80,7 +81,10 @@ export default function EmployerShell() {
       />
       <div className="flex-1 min-w-0">
         <SmallScreenNote />
-        <main className="px-5 py-8 lg:px-10 lg:py-8 max-w-[1192px]">
+        <main className="px-5 pt-4 pb-8 lg:px-10 lg:pt-5 lg:pb-8 max-w-[1192px]">
+          <div className="flex justify-end mb-2">
+            <EmployerNotifications employerId={BLUEHARBOR_ID} />
+          </div>
           <Outlet />
         </main>
       </div>

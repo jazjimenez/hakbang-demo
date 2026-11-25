@@ -19,6 +19,8 @@ export const strings = {
   'signup.create': ['Gumawa ng account', 'Create an account'],
   'signup.createSub': ['Ilang minuto lang, tapos makikita mo na ang mga track na swak sa’yo.', 'It takes a few minutes, then you’ll see the tracks that fit you.'],
   'signup.agree': ['Sa pag-sign up, sumasang-ayon ka sa Privacy Notice at Terms of Use.', 'By signing up, you agree to the Privacy Notice and Terms of Use.'],
+  'signup.dpa': ['Protektado ang data mo sa ilalim ng Data Privacy Act of 2012 (RA 10173).', 'Your data is protected under the Data Privacy Act of 2012 (RA 10173).'],
+  'signup.privacyLink': ['Basahin ang Privacy Notice', 'Read the Privacy Notice'],
   'signup.emailLabel': ['Email', 'Email'],
   'signup.passwordLabel': ['Password', 'Password'],
   'signup.providerNote': ['Demo lang: walang totoong sign-in.', 'Demo only: no real sign-in.'], // demo
@@ -36,7 +38,9 @@ export const strings = {
   'consent.control': ['Ikaw ang may kontrol', 'You’re in control'],
   'consent.controlD': ['I-edit o i-delete ang account mo kahit kailan.', 'Edit or delete your account anytime.'],
   'consent.full': ['Basahin ang buong Privacy Notice', 'Read the full Privacy Notice'],
-  'consent.agree': ['Sumasang-ayon ako sa Privacy Notice at Terms of Use.', 'I agree to the Privacy Notice and Terms of Use.'],
+  'consent.agree': ['Sumasang-ayon ako sa Privacy Notice at Terms of Use, at pinapayagan ko ang Hakbang na i-process ang personal data ko ayon sa Data Privacy Act of 2012 (RA 10173).', 'I agree to the Privacy Notice and Terms of Use, and consent to Hakbang processing my personal data under the Data Privacy Act of 2012 (RA 10173).'],
+  'consent.dpa': ['Data Privacy Act of 2012 (RA 10173)', 'Data Privacy Act of 2012 (RA 10173)'],
+  'consent.dpaD': ['Sa ilalim ng batas, may karapatan kang malaman kung paano ginagamit ang data mo, i-access at itama ito, tumutol, ipabura, at kunin ang kopya nito. Puwede ka ring magreklamo sa National Privacy Commission.', 'Under the law, you have the right to be informed, to access and correct your data, to object, to have it erased, and to get a copy of it. You can also file a complaint with the National Privacy Commission.'],
   'consent.cta': ['Sige, tuloy', 'Continue'],
 
   // S03 / S04 / D02

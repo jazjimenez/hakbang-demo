@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Application, CourseRecord, Employer, Endorsement, Hire, JobSeeker, Lang, Report, Role, Score, Track, VerificationChecklist } from './data/types';
 import { boostedMatch, courseById } from './data/courses';
-import { MAIN_TRACK_ID, PAOLO_ID, PRICING, seedApplications, seedEmployers, seedHires, seedSeekers, seedTracks } from './data/seed';
+import { BLUEHARBOR_ID, MAIN_TRACK_ID, PAOLO_ID, PRICING, seedApplications, seedEmployers, seedHires, seedSeekers, seedTracks } from './data/seed';
 
 export const STORAGE_KEY = 'hakbang-demo-v1';
 
@@ -23,6 +23,21 @@ interface Reminders {
   results: boolean;
 }
 
+export type EmployerNoteKind = 'applied' | 'course' | 'passed' | 'confirmed' | 'verified' | 'held' | 'track-live' | 'at-risk';
+
+/** One item in an employer's notification feed. */
+export interface EmployerNote {
+  id: string;
+  employerId: string;
+  kind: EmployerNoteKind;
+  title: string;
+  sub?: string;
+  to: string;
+  /** ms timestamp, for "5m ago" */
+  at: number;
+  read: boolean;
+}
+
 interface Data {
   lang: Lang;
   showLaunch: boolean;
@@ -41,6 +56,8 @@ interface Data {
   resumeCustom: Record<number, string>;
   reminders: Reminders;
   readAlerts: boolean;
+  /** employer-side notification feed (newest first) */
+  employerNotes: EmployerNote[];
   /** presenter guide overlay */
   guideOn: boolean;
   guideMode: 'pitch' | 'mvp';
@@ -87,6 +104,8 @@ interface Actions {
   setResumeValues: (n: number, v: string[]) => void;
   setResumeCustom: (n: number, v: string) => void;
   markAlertsRead: () => void;
+  markEmployerNotesRead: (employerId: string) => void;
+  readEmployerNote: (id: string) => void;
   setGuideOn: (v: boolean) => void;
   setGuideMode: (m: 'pitch' | 'mvp') => void;
   markSeen: (k: keyof Data['seen']) => void;
@@ -101,6 +120,16 @@ interface Actions {
   ffPassAll: () => void;
   ffHired: () => void;
 }
+
+const seedNotes = (): EmployerNote[] => {
+  const now = Date.now();
+  const h = 3600_000;
+  return [
+    { id: 'n-seed-risk', employerId: BLUEHARBOR_ID, kind: 'at-risk', title: 'Ken Bautista is at risk', sub: 'Module 1 scored 76%, below the 80% pass mark', to: '/employer/trainees', at: now - 3 * h, read: false },
+    { id: 'n-seed-passed', employerId: BLUEHARBOR_ID, kind: 'passed', title: 'Bea Santos and Marco Lim passed every module', sub: 'Back Office Associate · confirm their hire', to: '/employer/trainees', at: now - 20 * h, read: false },
+    { id: 'n-seed-matches', employerId: BLUEHARBOR_ID, kind: 'applied', title: '18 new matched candidates this week', sub: 'Back Office Associate', to: '/employer/candidates', at: now - 26 * h, read: true },
+  ];
+};
 
 const seed = (): Data => ({
   lang: 'fil',
@@ -120,6 +149,7 @@ const seed = (): Data => ({
   resumeCustom: {},
   reminders: { email: true, push: true, messenger: true, sms: false, deadlines: true, sessions: true, results: true },
   readAlerts: false,
+  employerNotes: seedNotes(),
   guideOn: false,
   guideMode: 'pitch',
   billingSeen: false,
@@ -145,6 +175,24 @@ export const useDemo = create<Data & Actions>()(
     (set, get) => {
       const patchApp = (id: string, fn: (a: Application) => Application) =>
         set((s) => ({ applications: s.applications.map((a) => (a.id === id ? fn(a) : a)) }));
+
+      /** Add a notification to an employer's feed. */
+      const notify = (n: Omit<EmployerNote, 'id' | 'at' | 'read'>) =>
+        set((s) => ({ employerNotes: [{ ...n, id: `n-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, at: Date.now(), read: false }, ...(s.employerNotes ?? [])].slice(0, 50) }));
+
+      const appCtx = (appId: string) => {
+        const a = get().applications.find((x) => x.id === appId);
+        const track = a && get().tracks.find((t) => t.id === a.trackId);
+        const seeker = a && get().seekers.find((x) => x.id === a.seekerId);
+        return { a, track, seeker };
+      };
+
+      /** Notify the employer when a results change moves a trainee to "passed". */
+      const notifyIfPassed = (appId: string, before?: string) => {
+        const { a, track, seeker } = appCtx(appId);
+        if (a && track && seeker && before !== 'passed' && a.status === 'passed')
+          notify({ employerId: track.employerId, kind: 'passed', title: `${seeker.name} passed every module`, sub: `${track.shortTitle} · confirm their hire`, to: '/employer/trainees' });
+      };
 
       const ensurePaoloApplied = () => {
         if (!get().applications.some((a) => a.id === paoloAppId())) get().apply(MAIN_TRACK_ID);
@@ -185,20 +233,29 @@ export const useDemo = create<Data & Actions>()(
             endorsements: [],
           };
           set((s) => ({ applications: [a, ...s.applications], savedTracks: s.savedTracks.filter((t) => t !== trackId) }));
+          const seeker = get().seekers.find((x) => x.id === PAOLO_ID);
+          notify({ employerId: track.employerId, kind: 'applied', title: `${seeker?.name ?? 'A candidate'} applied`, sub: `${track.shortTitle} · ${track.match.total}% match`, to: '/employer/candidates' });
         },
         saveTrack: (trackId) => set((s) => ({ savedTracks: s.savedTracks.includes(trackId) ? s.savedTracks : [...s.savedTracks, trackId] })),
         accept: (appId) =>
           patchApp(appId, (a) => ({ ...a, status: 'in-track', acceptedAt: 'Apr 8', attendance: '2 of 6', f2f: 'scheduled', scores: { m1: 'in-progress' } })),
         decline: (appId) => patchApp(appId, (a) => ({ ...a, status: 'declined' })),
-        postScore: (appId, moduleId, score) =>
+        postScore: (appId, moduleId, score) => {
+          const before = appCtx(appId).a?.status;
           patchApp(appId, (a) => {
             const scores = { ...a.scores, [moduleId]: score };
             if (moduleId === 'm1' && passed(score) && !a.scores.m2) scores.m2 = 'in-progress';
             const dates = { ...a.scoreDates, [moduleId]: moduleId === 'm1' ? 'Apr 17' : 'Apr 24' };
             const attendance = moduleId === 'm1' ? '4 of 6' : '6 of 6';
             return settle({ ...a, scores, scoreDates: dates, attendance });
-          }),
-        postF2F: (appId, ok) => patchApp(appId, (a) => settle({ ...a, f2f: ok ? 'passed' : 'scheduled' })),
+          });
+          notifyIfPassed(appId, before);
+        },
+        postF2F: (appId, ok) => {
+          const before = appCtx(appId).a?.status;
+          patchApp(appId, (a) => settle({ ...a, f2f: ok ? 'passed' : 'scheduled' }));
+          notifyIfPassed(appId, before);
+        },
         markHired: (appId, h) => {
           patchApp(appId, (a) => ({ ...a, status: 'hired-pending-trainee' }));
           const confirmed = get().hires.filter((x) => x.billed).length;
@@ -208,22 +265,36 @@ export const useDemo = create<Data & Actions>()(
         confirmHire: (appId) => {
           patchApp(appId, (a) => ({ ...a, status: 'hired-confirmed' }));
           set((s) => ({ hires: s.hires.map((h) => (h.applicationId === appId ? { ...h, billed: true, guaranteeDaysLeft: PRICING.guaranteeDays } : h)) }));
+          const { track, seeker } = appCtx(appId);
+          const fee = get().hires.find((h) => h.applicationId === appId)?.feePhp;
+          if (track && seeker)
+            notify({ employerId: track.employerId, kind: 'confirmed', title: `${seeker.name} confirmed your job offer`, sub: fee ? `Hire billed at ${peso(fee)}` : track.shortTitle, to: '/employer/billing' });
         },
         addEndorsement: (appId, e) =>
           patchApp(appId, (a) => ({ ...a, endorsements: [...a.endorsements, { ...e, id: `e-${Date.now()}` }] })),
 
         setVerification: (empId, key, v) =>
           set((s) => ({ employers: s.employers.map((e) => (e.id === empId ? { ...e, verification: { ...e.verification, [key]: v } } : e)) })),
-        approveEmployer: (empId) =>
+        approveEmployer: (empId) => {
+          const was = get().employers.find((e) => e.id === empId)?.verified;
           set((s) => ({
             employers: s.employers.map((e) =>
               e.id === empId
                 ? { ...e, verified: true, verification: { bir2303: true, secOrDti: true, businessPermit: true, partnerAgreement: true, termsReviewed: true } }
                 : e,
             ),
-          })),
-        holdEmployer: (empId) => set((s) => ({ employers: s.employers.map((e) => (e.id === empId ? { ...e, verified: false } : e)) })),
-        publishDraft: (trackId) => set((s) => ({ tracks: s.tracks.map((t) => (t.id === trackId ? { ...t, status: 'live' } : t)) })),
+          }));
+          if (!was) notify({ employerId: empId, kind: 'verified', title: 'Your company is verified', sub: 'You can now publish tracks to candidates', to: '/employer/verify' });
+        },
+        holdEmployer: (empId) => {
+          set((s) => ({ employers: s.employers.map((e) => (e.id === empId ? { ...e, verified: false } : e)) }));
+          notify({ employerId: empId, kind: 'held', title: 'Verification on hold', sub: 'Hakbang needs another look at your documents', to: '/employer/verify' });
+        },
+        publishDraft: (trackId) => {
+          const t = get().tracks.find((x) => x.id === trackId);
+          set((s) => ({ tracks: s.tracks.map((x) => (x.id === trackId ? { ...x, status: 'live' } : x)) }));
+          if (t && t.status !== 'live') notify({ employerId: t.employerId, kind: 'track-live', title: `${t.shortTitle} is live`, sub: 'Hakbang is matching candidates now', to: '/employer/tracks' });
+        },
 
         updateTrack: (trackId, p) => set((s) => ({ tracks: s.tracks.map((t) => (t.id === trackId ? { ...t, ...p } : t)) })),
         submitReport: (r) => set((s) => ({ reports: [...s.reports, { ...r, id: `r-${Date.now()}` }] })),
@@ -234,6 +305,9 @@ export const useDemo = create<Data & Actions>()(
         setResumeValues: (n, v) => set((s) => ({ resumeValues: { ...s.resumeValues, [n]: v } })),
         setResumeCustom: (n, v) => set((s) => ({ resumeCustom: { ...s.resumeCustom, [n]: v } })),
         markAlertsRead: () => set({ readAlerts: true }),
+        markEmployerNotesRead: (employerId) =>
+          set((s) => ({ employerNotes: (s.employerNotes ?? []).map((n) => (n.employerId === employerId ? { ...n, read: true } : n)) })),
+        readEmployerNote: (id) => set((s) => ({ employerNotes: (s.employerNotes ?? []).map((n) => (n.id === id ? { ...n, read: true } : n)) })),
         setGuideOn: (guideOn) => set({ guideOn }),
         setGuideMode: (guideMode) => set({ guideMode }),
         markSeen: (k) => set((s) => (s.seen[k] ? s : { seen: { ...s.seen, [k]: true } })),
@@ -245,6 +319,7 @@ export const useDemo = create<Data & Actions>()(
         finishCourse: (courseId, score) => {
           const c = courseById(courseId);
           if (!c) return;
+          const wasDone = get().courseRecords.some((r) => r.courseId === courseId);
           set((s) => {
             const lessonsDone = { ...s.lessonsDone, [courseId]: c.lessons.map((l) => l.id) };
             const courseRecords = s.courseRecords.some((r) => r.courseId === courseId)
@@ -259,6 +334,15 @@ export const useDemo = create<Data & Actions>()(
             });
             return { lessonsDone, courseRecords, seekers };
           });
+          // employers with Paolo in their pipeline hear about the new certificate
+          const name = get().seekers.find((x) => x.id === PAOLO_ID)?.name ?? 'A candidate';
+          const empIds = new Set(
+            get()
+              .applications.filter((a) => a.seekerId === PAOLO_ID && a.status !== 'declined')
+              .map((a) => get().tracks.find((t) => t.id === a.trackId)?.employerId)
+              .filter((x): x is string => !!x),
+          );
+          if (!wasDone) empIds.forEach((employerId) => notify({ employerId, kind: 'course', title: `${name} earned a certificate`, sub: c.title, to: '/employer/candidates' }));
         },
         ffFinishCourse: (courseId = 'excel-basics') => get().finishCourse(courseId, 100),
         upsertTrack: (t) => set((s) => ({ tracks: s.tracks.some((x) => x.id === t.id) ? s.tracks.map((x) => (x.id === t.id ? t : x)) : [...s.tracks, t] })),

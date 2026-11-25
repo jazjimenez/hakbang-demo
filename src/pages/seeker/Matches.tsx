@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AlertCircle, Award, BookOpen, Briefcase, Calendar, Check, Clock, Flag, GraduationCap, Lock, MapPin, PhilippinePeso, Search, ShieldCheck, Sparkles, Users } from 'lucide-react';
+import { AlertCircle, Award, BookOpen, Briefcase, Calendar, Check, Clock, Flag, GraduationCap, Lock, MapPin, Search, ShieldCheck, Sparkles, Users, Wallet } from 'lucide-react';
 import { AppHeader } from '../../layouts/SeekerShell';
 import { MobileFooter } from '../../layouts/SeekerShell';
 import { BottomSheet, Button, Checkbox, Chip, CloseButton, CompanyTile, LaunchTag, MatchBars, Modal, ScoreRing, StatusPill, Toast, TopBar, VerifiedBadge, cx, useIsDesktop } from '../../components/ui';
@@ -62,7 +62,7 @@ function useApplied(trackId: string) {
 function Facts({ track, compact }: { track: Track; compact?: boolean }) {
   const t = useT();
   const items: [typeof Calendar, string][] = [[Calendar, t('weeks', { n: track.lengthWeeks })]];
-  if (track.allowancePhp) items.push([PhilippinePeso, compact ? peso(track.allowancePhp) : t('allowance', { amt: peso(track.allowancePhp) })]);
+  if (track.allowancePhp) items.push([Wallet, compact ? peso(track.allowancePhp) : t('allowance', { amt: peso(track.allowancePhp) })]);
   if (!compact) items.push([Clock, track.schedule]);
   else if (!track.allowancePhp) items.push([Clock, track.schedule]);
   items.push([MapPin, track.locationShort]);
@@ -280,7 +280,7 @@ function FactGrid({ track }: { track: Track }) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
       <FactTile icon={Calendar} label={t('track.length')} value={t('weeks', { n: track.lengthWeeks })} />
-      <FactTile icon={PhilippinePeso} label={t('track.allowance')} value={track.allowancePhp ? peso(track.allowancePhp) : t('track.none')} />
+      <FactTile icon={Wallet} label={t('track.allowance')} value={track.allowancePhp ? peso(track.allowancePhp) : t('track.none')} />
       <FactTile icon={Clock} label={t('track.schedule')} value={track.scheduleLong} />
       <FactTile icon={MapPin} label={t('track.location')} value={track.location} />
     </div>

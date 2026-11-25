@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, Building2, Globe2, Home as HomeIcon, Calendar, Check, Clock, FileText, Flag, MapPin, Minus, PhilippinePeso, Plus, Route as RouteIcon, ShieldCheck, Sparkles, Star, User } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Building2, Globe2, Home as HomeIcon, Calendar, Check, Clock, FileText, Flag, MapPin, Minus, Plus, Route as RouteIcon, ShieldCheck, Sparkles, Star, User, Wallet } from 'lucide-react';
 import { Logo, NavBrand, Swoosh } from '../components/Brand';
 import { Trail } from '../components/Trail';
 import { CountUp, EdgeTrail, HoverHighlight, MagneticCta, Reveal, SpringNumber, TiltCard, WordsIn } from '../components/Motion';
@@ -594,7 +594,7 @@ export default function Landing() {
                   {(
                     [
                       [Calendar, t('l.f.4weeks')],
-                      [PhilippinePeso, t('allowance', { amt: '₱3,000' })],
+                      [Wallet, t('allowance', { amt: '₱3,000' })],
                       [Clock, t('l.f.satsun')],
                       [MapPin, 'Ortigas'],
                     ] as const

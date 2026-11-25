@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Building2, Check, ChevronRight, FileText, Lock, Plus, Sparkles, Upload as UploadIcon, Users, X } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Building2, Check, ChevronRight, FileText, Lock, Plus, ShieldCheck, Sparkles, Upload as UploadIcon, Users, X } from 'lucide-react';
 import { Logo, NavBrand, Swoosh } from '../../components/Brand';
 import { HeroPhoto } from '../../components/HeroPhoto';
 import { Accent, Button, Checkbox, Field, IconTile, LangToggle, ProgressBar, TopBar, cx, useIsDesktop } from '../../components/ui';
@@ -91,6 +91,21 @@ function StepBars({ step }: { step: 1 | 2 | 3 }) {
   );
 }
 
+function DpaNote({ dark, className }: { dark?: boolean; className?: string }) {
+  const t = useT();
+  return (
+    <p className={cx('flex items-start gap-2 text-caption', dark ? 'text-white/70' : 'text-muted', className)}>
+      <ShieldCheck size={16} className={cx('shrink-0 mt-px', dark ? 'text-lime' : 'text-green')} aria-hidden />
+      <span>
+        {t('signup.dpa')}{' '}
+        <Link to="/legal/privacy" className={cx('font-semibold underline focus-ring rounded', dark ? 'text-lime' : 'text-green')}>
+          {t('signup.privacyLink')}
+        </Link>
+      </span>
+    </p>
+  );
+}
+
 /* ---------- S01 / D01 Sign up ---------- */
 
 export function Signup() {
@@ -142,6 +157,7 @@ export function Signup() {
             </div>
             <ProviderButtons onPick={next} />
             <p className="mt-5 text-caption text-muted">{t('signup.agree')}</p>
+            <DpaNote className="mt-3" />
             <p className="mt-3 text-body-s text-muted">
               {t('signup.haveAccount')}{' '}
               <button type="button" onClick={login} className="text-green font-semibold focus-ring rounded">
@@ -180,7 +196,9 @@ export function Signup() {
             <span className="h-px flex-1 bg-white/25" />
           </div>
           <ProviderButtons dark onPick={next} />
-          <p className="mt-5 text-center text-body-s">
+          <p className="mt-5 text-center text-caption text-white/70">{t('signup.agree')}</p>
+          <DpaNote dark className="mt-2 justify-center text-center" />
+          <p className="mt-4 text-center text-body-s">
             {t('signup.haveAccount')}{' '}
             <button type="button" onClick={login} className="text-lime font-semibold focus-ring rounded">
               {t('signup.login')}
@@ -214,7 +232,14 @@ export function Consent() {
         <div className="px-5 pb-6 flex-1">
           <h1 className="mt-2 text-h-l lg:text-display">{t('consent.title')}</h1>
           <p className="mt-3 text-body-s text-muted">{t('consent.sub')}</p>
-          <ul className="mt-5 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm divide-y divide-line">
+          <div className="mt-5 flex gap-3.5 rounded-card border border-green bg-mint p-4">
+            <ShieldCheck size={22} className="text-green shrink-0 mt-0.5" aria-hidden />
+            <div>
+              <div className="text-title text-green">{t('consent.dpa')}</div>
+              <div className="text-body-s text-ink mt-0.5">{t('consent.dpaD')}</div>
+            </div>
+          </div>
+          <ul className="mt-4 bg-cream border-[1.5px] border-ink rounded-card shadow-brut-sm divide-y divide-line">
             {items.map(([Icon, h, d]) => (
               <li key={h} className="flex gap-3.5 p-4">
                 <IconTile icon={Icon} size={40} />
